@@ -108,7 +108,7 @@ const linkData = [
         groupName: "第五群組：待新增",
         links: [
             { name: "自訂名稱 1", url: "#", icon: "fa-solid fa-screwdriver-wrench", status: 'placeholder' }, { name: "自訂名稱 2", url: "#", icon: "fa-solid fa-screwdriver-wrench", status: 'placeholder' }, { name: "自訂名稱 3", url: "#", icon: "fa-solid fa-screwdriver-wrench", status: 'placeholder' }, { name: "自訂名稱 4", url: "#", icon: "fa-solid fa-screwdriver-wrench", status: 'placeholder' }, { name: "自訂名稱 5", url: "#", icon: "fa-solid fa-screwdriver-wrench", status: 'placeholder' }, { name: "自訂名稱 6", url: "#", icon: "fa-solid fa-screwdriver-wrench", status: 'placeholder' }, { name: "自訂名稱 7", url: "#", icon: "fa-solid fa-screwdriver-wrench", status: 'placeholder' }, { name: "自訂名稱 8", url: "#", icon: "fa-solid fa-screwdriver-wrench", status: 'placeholder' }, { name: "自訂名稱 9", url: "#", icon: "fa-solid fa-screwdriver-wrench", status: 'placeholder' }, { name: "自訂名稱 10", url: "#", icon: "fa-solid fa-screwdriver-wrench", status: 'placeholder' },
-            { name: "自訂名稱 11", url: "#", icon: "fa-solid fa-screwdriver-wrench", status: 'placeholder' }, { name: "自訂名稱 12", url: "#", icon: "fa-solid fa-screwdriver-wrench", status: 'placeholder' }, { name: "自訂名稱 13", url: "#", icon: "fa-solid fa-screwdriver-wrench", status: 'placeholder' }, { name: "自訂名稱 14", url: "#", icon: "fa-solid fa-screwdriver-wrench", status: 'placeholder' }, { name: "自訂名稱 15", url: "#", icon: "fa-solid fa-screwdriver-wrench", status: 'placeholder' }, { name: "自訂名稱 16", url: "#", icon: "fa-solid fa-screwdriver-wrench", status: 'placeholder' }, { name: "自訂名稱 17", url: "#", icon: "fa-solid fa-screwdriver-wrench", status: 'placeholder' }, { name: "自訂名稱 18", url: "#", icon: "fa-solid fa-screwdriver-wrench", status: 'placeholder' }, { name: "自訂名稱 19", url: "#", icon: "fa-solid fa-screwdriver-wrench", status: 'placeholder' }, { name: "自訂名稱 20", url: "#", icon: "fa-solid fa-screwdriver-wrench", status: 'placeholder' },
+            { name: "自訂名稱 11", url: "#", icon: "fa-solid fa-screwdriver-wrench", status: 'placeholder' }, { name: "自訂名稱 12", url: "#", icon: "fa-solid fa-screwdriver-wrench", status: 'placeholder' }, { name: "自訂名稱 13", url: "#", icon: "fa-solid fa-screwdriver-wrench", status: 'placeholder' }, { name: "自訂名稱 14", url: "#", icon: "fa-solid fa-screwdriver-wrench", status: 'placeholder' }, { name: "自訂名稱 15", url: "#", icon: "fa-solid fa-screwdriver-wrench", status: 'placeholder' }, { name: "自訂名稱 16", url: "#", icon: "fa-solid fa-screwdriver-wrench", status: 'placeholder' }, { name: "自訂名称 17", url: "#", icon: "fa-solid fa-screwdriver-wrench", status: 'placeholder' }, { name: "自訂名稱 18", url: "#", icon: "fa-solid fa-screwdriver-wrench", status: 'placeholder' }, { name: "自訂名稱 19", url: "#", icon: "fa-solid fa-screwdriver-wrench", status: 'placeholder' }, { name: "自訂名稱 20", url: "#", icon: "fa-solid fa-screwdriver-wrench", status: 'placeholder' },
         ]
     },
     {
@@ -190,8 +190,8 @@ document.addEventListener('DOMContentLoaded', function() {
             event.preventDefault(); 
             const query = lawbankSearchInput.value.trim();
             if (query === '') return;
-            // 法源六法的搜尋網址格式
-            const lawbankSearchURL = `https://six.lawbank.com.tw/FLAW/FLAW_S.aspx?kw=${encodeURIComponent(query)}`;
+            // 修正後的法源六法搜尋網址格式
+            const lawbankSearchURL = `https://six.lawbank.com.tw/FLAW/FLAW_S.aspx?so=S&kw=${encodeURIComponent(query)}`;
             window.open(lawbankSearchURL, '_blank');
         });
     }
