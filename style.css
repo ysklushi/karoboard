@@ -12,6 +12,9 @@ body {
     color: #fff;
     padding: 15px 30px;
     box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
 }
 
 .page-header h1 {
@@ -19,6 +22,20 @@ body {
     font-size: 24px;
     font-weight: 600;
     letter-spacing: 1px;
+}
+
+/* === 新增：右上角連結的樣式 === */
+.header-link {
+    color: #fff;
+    text-decoration: none;
+    font-size: 16px;
+    font-weight: 500;
+    transition: all 0.2s ease;
+}
+
+.header-link:hover {
+    color: #a8c7fa;
+    text-decoration: underline;
 }
 
 /* 快速導航列樣式 */
@@ -182,9 +199,13 @@ body {
     .page-header {
         padding: 12px 20px;
         text-align: center;
+        justify-content: center;
     }
     .page-header h1 {
         font-size: 20px;
+    }
+    .header-link {
+        display: none;
     }
     .icon-container { height: 80px; }
     .icon-container i { font-size: 40px; }
