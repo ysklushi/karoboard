@@ -49,34 +49,82 @@ body {
     font-weight: 600;
 }
 
+
+/* ======================================================= */
+/* ===           這裡是響應式設計的主要修改區域          === */
+/* ======================================================= */
+
+/* 預設樣式 (手機優先)：每列 4 個 */
 .grid-container {
     display: grid;
-    grid-template-columns: repeat(8, 1fr);
-    gap: 15px; 
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px; 
 }
+
+.icon-container {
+    height: 80px; /* 手機上高度可以小一點 */
+    display: flex; align-items: center; justify-content: center;
+    background-color: rgba(255, 255, 255, 0.6);
+    border-bottom: 1px solid #eee;
+}
+
+.icon-container i {
+    font-size: 40px; /* 手機上圖示小一點 */
+    color: #5a7a9e;
+    transition: transform 0.2s ease;
+}
+
+.link-card .title {
+    font-size: 12px; /* 手機上字體小一點 */
+    padding: 10px 5px;
+    margin: 0;
+    font-weight: 600;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+
+/* 當螢幕寬度大於等於 768px (平板) */
+@media (min-width: 768px) {
+    .grid-container {
+        /* 改為 8 欄 */
+        grid-template-columns: repeat(8, 1fr);
+        gap: 15px;
+    }
+    .icon-container {
+        height: 90px;
+    }
+    .icon-container i {
+        font-size: 48px;
+    }
+    .link-card .title {
+        font-size: 14px;
+    }
+}
+
+/* 當螢幕寬度大於等於 1024px (電腦) */
+@media (min-width: 1024px) {
+    .grid-container {
+        /* 改為 10 欄 */
+        grid-template-columns: repeat(10, 1fr);
+    }
+    .icon-container {
+        height: 100px;
+    }
+    .icon-container i {
+        font-size: 56px;
+    }
+    .link-card .title {
+        font-size: 15px;
+    }
+}
+
+/* ======================================================= */
+/* ===                  (修改區域結束)                   === */
+/* ======================================================= */
+
 
 .link-card {
     display: block; text-decoration: none; color: inherit; background-color: #fff; border: 1px solid #eee; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 5px rgba(0,0,0,0.05); transition: all 0.2s ease-in-out; text-align: center;
 }
 .link-card:hover { transform: translateY(-5px); box-shadow: 0 8px 15px rgba(0,0,0,0.1); border-color: #a8c7fa; }
 
-.icon-container {
-    height: 100px;
-    display: flex; align-items: center; justify-content: center;
-    background-color: rgba(255, 255, 255, 0.6);
-    border-bottom: 1px solid #eee;
-}
-.icon-container i {
-    font-size: 56px; 
-    color: #5a7a9e;
-    transition: transform 0.2s ease;
-}
 .link-card:hover .icon-container i { transform: scale(1.1); }
-
-.link-card .title {
-    font-size: 15px;
-    padding: 12px 5px;
-    margin: 0;
-    font-weight: 600;
-    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-}
