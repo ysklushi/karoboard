@@ -5,13 +5,17 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>我的自訂首頁</title>
     
-    <!-- 1. 引入 Font Awesome 圖示庫 -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    
-    <!-- 2. 引入你的 CSS 樣式檔案 -->
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
+
+    <div class="page-header">
+        <h1>過勞儀表板</h1>
+    </div>
+
+    <nav id="quick-nav" class="quick-nav-container"></nav>
+
     <header class="search-header">
         <div class="search-container">
             <form id="google-search-form" class="search-form">
@@ -21,16 +25,29 @@
                 </div>
                 <button type="submit" style="display: none;">搜尋</button>
             </form>
+
+            <!-- === 新增：法源六法搜尋框 === -->
+            <form id="lawbank-search-form" class="search-form">
+                <div class="search-box">
+                    <i class="fa-solid fa-book-atlas search-icon"></i>
+                    <input type="text" id="lawbank-search-input" class="search-input" placeholder="在法源六法上搜尋" autocomplete="off">
+                </div>
+                <button type="submit" style="display: none;">搜尋</button>
+            </form>
+
         </div>
     </header>
 
     <main class="container">
-        <!-- 這個 div 將由 links.js 自動填滿 -->
         <div id="link-container"></div>
     </main>
 
-    <!-- 3. 引入你的 JavaScript 檔案 (所有連結資料與邏輯都在這裡) -->
-    <!-- 建議將 script.js 改名為 links.js，更能體現其作用 -->
+    <!-- === 新增：回到最上層的浮動按鈕 === -->
+    <a href="#" id="back-to-top-btn" class="back-to-top-btn">
+        <i class="fa-solid fa-arrow-up"></i>
+        <span>回到最上</span>
+    </a>
+
     <script src="links.js"></script>
 </body>
 </html>
