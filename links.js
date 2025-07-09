@@ -213,8 +213,13 @@ document.addEventListener('DOMContentLoaded', function() {
             linksHTML += `<section id="${groupId}" class="link-group"><h2>${group.groupName}</h2><div class="grid-container">`;
             
             group.links.forEach(link => {
-                const placeholderClass = link.status === 'placeholder' ? ' is-placeholder' : ''
-                linksHTML += `<a href="${link.url}" target="_blank" class="link-card${placeholderClass}" title="${link.name}"><div class="icon-container"><i class="${link.icon}"></i></div><p class="title">${link.name}</p></a>`;
+                const placeholderClass = link.status === 'placeholder' ? ' is-placeholder' : '';
+                // ▼▼▼ 修改處 ▼▼▼
+                // 在此處理文字，將 '(' 替換為 '<br>(' 來強制換行
+                const formattedName = link.name.replace('(', '<br>(');
+                // ▲▲▲ 修改處 ▲▲▲
+
+                linksHTML += `<a href="${link.url}" target="_blank" class="link-card${placeholderClass}" title="${link.name}"><div class="icon-container"><i class="${link.icon}"></i></div><p class="title">${formattedName}</p></a>`;
             });
 
             linksHTML += `</div></section>`;
