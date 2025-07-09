@@ -4,6 +4,7 @@
 // ==                                                             ==
 // =================================================================
 const linkData = [
+    // ... (linkData 的內容保持不變，此處省略) ...
     {
         groupName: "第一群組：律師常用",
         links: [
@@ -42,7 +43,7 @@ const linkData = [
             { name: "Claude (寫程式)", url: "https://claude.ai/", icon: "fa-solid fa-code" },
             { name: "Liner (寫作風格)", url: "https://getliner.com/zh", icon: "fa-solid fa-highlighter" },
             { name: "Felo (心智圖)", url: "https://felo.ai/search", icon: "fa-solid fa-diagram-project" },
-            { name: "Elevenlabs (讀稿)", url: "https://elevenlabs.io/", icon: "fa-solid fa-waveform" },
+            { name: "Elevenlabs (讀稿)", url: "https://elevenlabs.io/", icon: "fa-solid fa-microphone" },
             { name: "KlingAI (影片)", url: "https://app.klingai.com/global/", icon: "fa-solid fa-film" },
             { name: "Hailuoai (影片)", url: "https://hailuoai.video/", icon: "fa-solid fa-video" },
             { name: "SONO (音樂)", url: "https://suno.com/home", icon: "fa-solid fa-music" },
@@ -87,9 +88,9 @@ const linkData = [
             { name: "清大開放式課程", url: "https://ocw.nthu.edu.tw/ocw/", icon: "fa-solid fa-laptop-code" },
             { name: "政大開放式課程", url: "https://ctld.video.nccu.edu.tw/", icon: "fa-solid fa-laptop-code" },
             { name: "民法債總(孫森焱)", url: "https://www.angle.com.tw/media/Web/Video/GroupDetail.aspx?1=1&iC=7805&iMG=4610", icon: "fa-solid fa-person-chalkboard" },
-            { name: "MIT OpenCourseWare", url: "https://ocw.mit.edu/", icon: "fa-brands fa-mit" },
+            { name: "MIT Open Course Ware", url: "https://ocw.mit.edu/", icon: "fa-solid fa-building-columns" },
             { name: "Harvard Online", url: "https://online.hbs.edu/", icon: "fa-solid fa-building-columns" },
-            { name: "Stanford Online", url: "https://online.stanford.edu/", icon: "fa-solid fa-tree" },
+            { name: "Stanford Online", url: "https://online.stanford.edu/", icon: "fa-solid fa-building-columns"},
             { name: "EWANT教育平台", url: "https://www.ewant.org/?redirect=0", icon: "fa-solid fa-network-wired" },
             { name: "自訂名稱 10", url: "#", icon: "fa-solid fa-screwdriver-wrench", status: 'placeholder' },
             { name: "自訂名稱 11", url: "#", icon: "fa-solid fa-screwdriver-wrench", status: 'placeholder' },
@@ -108,7 +109,7 @@ const linkData = [
         groupName: "第五群組：待新增",
         links: [
             { name: "自訂名稱 1", url: "#", icon: "fa-solid fa-screwdriver-wrench", status: 'placeholder' }, { name: "自訂名稱 2", url: "#", icon: "fa-solid fa-screwdriver-wrench", status: 'placeholder' }, { name: "自訂名稱 3", url: "#", icon: "fa-solid fa-screwdriver-wrench", status: 'placeholder' }, { name: "自訂名稱 4", url: "#", icon: "fa-solid fa-screwdriver-wrench", status: 'placeholder' }, { name: "自訂名稱 5", url: "#", icon: "fa-solid fa-screwdriver-wrench", status: 'placeholder' }, { name: "自訂名稱 6", url: "#", icon: "fa-solid fa-screwdriver-wrench", status: 'placeholder' }, { name: "自訂名稱 7", url: "#", icon: "fa-solid fa-screwdriver-wrench", status: 'placeholder' }, { name: "自訂名稱 8", url: "#", icon: "fa-solid fa-screwdriver-wrench", status: 'placeholder' }, { name: "自訂名稱 9", url: "#", icon: "fa-solid fa-screwdriver-wrench", status: 'placeholder' }, { name: "自訂名稱 10", url: "#", icon: "fa-solid fa-screwdriver-wrench", status: 'placeholder' },
-            { name: "自訂名稱 11", url: "#", icon: "fa-solid fa-screwdriver-wrench", status: 'placeholder' }, { name: "自訂名稱 12", url: "#", icon: "fa-solid fa-screwdriver-wrench", status: 'placeholder' }, { name: "自訂名稱 13", url: "#", icon: "fa-solid fa-screwdriver-wrench", status: 'placeholder' }, { name: "自訂名稱 14", url: "#", icon: "fa-solid fa-screwdriver-wrench", status: 'placeholder' }, { name: "自訂名稱 15", url: "#", icon: "fa-solid fa-screwdriver-wrench", status: 'placeholder' }, { name: "自訂名稱 16", url: "#", icon: "fa-solid fa-screwdriver-wrench", status: 'placeholder' }, { name: "自訂名称 17", url: "#", icon: "fa-solid fa-screwdriver-wrench", status: 'placeholder' }, { name: "自訂名稱 18", url: "#", icon: "fa-solid fa-screwdriver-wrench", status: 'placeholder' }, { name: "自訂名稱 19", url: "#", icon: "fa-solid fa-screwdriver-wrench", status: 'placeholder' }, { name: "自訂名稱 20", url: "#", icon: "fa-solid fa-screwdriver-wrench", status: 'placeholder' },
+            { name: "自訂名稱 11", url: "#", icon: "fa-solid fa-screwdriver-wrench", status: 'placeholder' }, { name: "自訂名稱 12", url: "#", icon: "fa-solid fa-screwdriver-wrench", status: 'placeholder' }, { name: "自訂名稱 13", url: "#", icon: "fa-solid fa-screwdriver-wrench", status: 'placeholder' }, { name: "自訂名稱 14", url: "#", icon: "fa-solid fa-screwdriver-wrench", status: 'placeholder' }, { name: "自訂名稱 15", url: "#", icon: "fa-solid fa-screwdriver-wrench", status: 'placeholder' }, { name: "自訂名稱 16", url: "#", icon: "fa-solid fa-screwdriver-wrench", status: 'placeholder' }, { name: "自訂名稱 17", url: "#", icon: "fa-solid fa-screwdriver-wrench", status: 'placeholder' }, { name: "自訂名稱 18", url: "#", icon: "fa-solid fa-screwdriver-wrench", status: 'placeholder' }, { name: "自訂名稱 19", url: "#", icon: "fa-solid fa-screwdriver-wrench", status: 'placeholder' }, { name: "自訂名稱 20", url: "#", icon: "fa-solid fa-screwdriver-wrench", status: 'placeholder' },
         ]
     },
     {
@@ -190,8 +191,8 @@ document.addEventListener('DOMContentLoaded', function() {
             event.preventDefault(); 
             const query = lawbankSearchInput.value.trim();
             if (query === '') return;
-            // 修正後的法源六法搜尋網址格式
-            const lawbankSearchURL = `https://six.lawbank.com.tw/FLAW/FLAW_S.aspx?so=S&kw=${encodeURIComponent(query)}`;
+            // 採納您發現的、更好更通用的網址格式！
+            const lawbankSearchURL = `https://six.lawbank.com.tw/Search/Result?keywords=${encodeURIComponent(query)}`;
             window.open(lawbankSearchURL, '_blank');
         });
     }
@@ -212,7 +213,7 @@ document.addEventListener('DOMContentLoaded', function() {
             linksHTML += `<section id="${groupId}" class="link-group"><h2>${group.groupName}</h2><div class="grid-container">`;
             
             group.links.forEach(link => {
-                const placeholderClass = link.status === 'placeholder' ? ' is-placeholder' : '';
+                const placeholderClass = link.status === 'placeholder' ? ' is-placeholder' : ''
                 linksHTML += `<a href="${link.url}" target="_blank" class="link-card${placeholderClass}" title="${link.name}"><div class="icon-container"><i class="${link.icon}"></i></div><p class="title">${link.name}</p></a>`;
             });
 
