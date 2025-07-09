@@ -24,7 +24,6 @@ body {
     letter-spacing: 1px;
 }
 
-/* === 新增：右上角連結的樣式 === */
 .header-link {
     color: #fff;
     text-decoration: none;
@@ -36,6 +35,23 @@ body {
 .header-link:hover {
     color: #a8c7fa;
     text-decoration: underline;
+}
+
+/* === 新增：手機版專用連結的樣式 === */
+.mobile-home-link {
+    display: none; /* 關鍵：預設（電腦版）隱藏 */
+    background-color: #34495e;
+    color: #fff;
+    text-align: center;
+    padding: 10px 15px;
+    text-decoration: none;
+    font-size: 15px;
+    font-weight: 600;
+    transition: background-color 0.2s ease;
+}
+
+.mobile-home-link:hover {
+    background-color: #4a6572;
 }
 
 /* 快速導航列樣式 */
@@ -88,7 +104,6 @@ body {
 .search-input { width: 100%; padding: 12px 20px 12px 50px; font-size: 16px; border: 1px solid #dfe1e5; border-radius: 24px; box-shadow: none; transition: box-shadow 0.2s ease; box-sizing: border-box; }
 .search-input:focus { outline: none; box-shadow: 0 1px 6px rgba(32,33,36,0.28); }
 
-/* --- 新增：讓連續的搜尋框之間有間距 --- */
 .search-form + .search-form {
     margin-top: 15px;
 }
@@ -207,6 +222,9 @@ body {
     .header-link {
         display: none;
     }
+    .mobile-home-link {
+        display: block;
+    }
     .icon-container { height: 80px; }
     .icon-container i { font-size: 40px; }
     .link-card .title { font-size: 12px; min-height: 32px; }
@@ -221,25 +239,20 @@ body {
     color: #aaa;
 }
 
-/* --- 新增：回到最上層按鈕的樣式 --- */
 .back-to-top-btn {
-    position: fixed; /* 關鍵：讓按鈕浮動 */
+    position: fixed;
     bottom: 30px;
     right: 30px;
-    
-    /* 外觀設計 */
     display: inline-flex;
     align-items: center;
     padding: 10px 15px;
-    background-color: #2c3e50; /* 與頂部標題列顏色一致 */
+    background-color: #2c3e50;
     color: #fff;
-    border-radius: 50px; /* 膠囊形狀 */
+    border-radius: 50px;
     text-decoration: none;
     font-size: 14px;
     font-weight: 600;
     box-shadow: 0 4px 8px rgba(0,0,0,0.2);
-    
-    /* 預設隱藏，並準備動畫效果 */
     opacity: 0;
     visibility: hidden;
     transform: translateY(20px);
@@ -250,7 +263,6 @@ body {
     margin-right: 8px;
 }
 
-/* 當按鈕擁有 'show' class 時，讓它顯示出來 */
 .back-to-top-btn.show {
     opacity: 1;
     visibility: visible;
@@ -258,5 +270,5 @@ body {
 }
 
 .back-to-top-btn:hover {
-    background-color: #34495e; /* 滑鼠移上去時顏色變深一點 */
+    background-color: #34495e;
 }
