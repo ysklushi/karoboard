@@ -3,53 +3,164 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>我的自訂首頁</title>
-    
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <title>楊時綱律師 - 個人網站</title>
     <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
 
-    <div class="page-header">
-        <h1>過勞儀表板</h1>
-        <a href="https://karolushi.netlify.app" class="header-link">楊時綱律師</a>
-    </div>
+    <header>
+        <nav>
+            <div class="logo">楊時綱律師</div>
 
-    <!-- 新增：專門給手機版顯示的連結 -->
-    <a href="https://karolushi.netlify.app" class="mobile-home-link">前往 楊時綱律師 個人網站</a>
-
-    <nav id="quick-nav" class="quick-nav-container"></nav>
-
-    <header class="search-header">
-        <div class="search-container">
-            <form id="google-search-form" class="search-form">
-                <div class="search-box">
-                    <i class="fa-solid fa-magnifying-glass search-icon"></i>
-                    <input type="text" id="search-input" class="search-input" placeholder="在 Google 上搜尋，或輸入一個網址" autocomplete="off">
-                </div>
-                <button type="submit" style="display: none;">搜尋</button>
-            </form>
-
-            <form id="lawbank-search-form" class="search-form">
-                <div class="search-box">
-                    <i class="fa-solid fa-book-atlas search-icon"></i>
-                    <input type="text" id="lawbank-search-input" class="search-input" placeholder="在法源六法上搜尋" autocomplete="off">
-                </div>
-                <button type="submit" style="display: none;">搜尋</button>
-            </form>
-
-        </div>
+            <!-- ▼▼▼ 修改處 ▼▼▼ -->
+            <!-- 將 "過勞儀表板" 按鈕移至下方的 ul.nav-links 中，使其成為導覽選單的一部分 -->
+            <ul class="nav-links">
+                <!-- 將原本在 nav 底下的按鈕移到這裡，並用 li 包起來 -->
+                <li>
+                    <a href="https://karoboard.netlify.app" target="_blank" rel="noopener noreferrer" class="cta-nav-button">過勞儀表板</a>
+                </li>
+                <li><a href="#about">關於我</a></li>
+                <li><a href="#skills">提供服務</a></li>
+                <li><a href="#portfolio">法普分享</a></li>
+                <li><a href="#contact">聯絡方式</a></li>
+            </ul>
+            <!-- ▲▲▲ 修改處 ▲▲▲ -->
+            
+            <div class="burger">
+                <div class="line1"></div>
+                <div class="line2"></div>
+                <div class="line3"></div>
+            </div>
+        </nav>
     </header>
 
-    <main class="container">
-        <div id="link-container"></div>
+    <main>
+        <!-- 主要介紹區 -->
+        <section id="hero">
+            <div class="hero-content">
+                <h1>你好，我是 楊時綱律師</h1>
+                <p>過勞律師 — 處理過勞資糾紛的律師</p>
+                <a href="#portfolio" class="cta-button">實務見解或法普文章分享</a>
+            </div>
+        </section>
+
+        <!-- 關於我 -->
+        <section id="about">
+            <h2>關於我</h2>
+            <div class="about-container">
+                <img src="profile.jpg" alt="你的照片" class="profile-pic">
+                <p>對法律訴訟充滿熱情，在協助勞資雙方處理爭議方面有著豐富的經驗，樂於分享法律常識協助民眾避免糾紛發生。</p>
+                <p>喜歡閱讀法律新聞，並檢視判決的論理分析，深信持續關心法律議題與實務脈動是協助當事人解決問題的基本功。</p>
+            </div>
+        </section>
+
+        <!-- 我的技能 -->
+        <section id="skills">
+            <h2>提供服務</h2>
+            <div class="skills-grid">
+                <div class="skill-item">
+                    <i class="fas fa-gavel"></i>
+                    <h3>訴訟委任</h3>
+                    <p>勞資、車禍、租賃、離婚、金錢糾紛、刑事辯護等</p>
+                </div>
+                <div class="skill-item">
+                    <i class="fas fa-handshake"></i>
+                    <h3>調解代理</h3>
+                    <p>透過最省成本的調解，竭力爭取有利條件</p>
+                </div>
+                <div class="skill-item">
+                    <i class="fas fa-file-signature"></i>
+                    <h3>撰寫書狀</h3>
+                    <p>存證信函、律師函、起訴狀、告訴狀、答辯狀、申訴書等</p>
+                </div>
+                <div class="skill-item">
+                    <i class="fas fa-magnifying-glass"></i>
+                    <h3>法律諮詢</h3>
+                    <p>卷證分析、風險評估、審閱合約、提供法律意見等</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- 作品集 -->
+        <section id="portfolio">
+            <h2>法普分享</h2>
+            <div class="portfolio-grid">
+                <div class="portfolio-item">
+                    <img src="project1.jpg" alt="作品一">
+                    <div class="portfolio-info">
+                        <h3>過勞律師碎碎唸（臉書）</h3>
+                        <p>分享實務判決摘錄</p>
+                        <a href="https://www.facebook.com/karolushi/" target="_blank">查看臉書粉專</a>
+                    </div>
+                </div>
+                <div class="portfolio-item">
+                    <img src="project2.jpg" alt="作品二">
+                    <div class="portfolio-info">
+                        <h3>作伙來聽NotebookLM學法律</h3>
+                        <p>善用AI學習法律常識</p>
+                        <a href="https://player.soundon.fm/p/44204aac-a7b2-4e43-9fcc-20fa42ffd618" target="_blank">查看SoundOn</a>
+                    </div>
+                </div>
+                <div class="portfolio-item">
+                    <img src="project3.jpg" alt="作品三">
+                    <div class="portfolio-info">
+                        <h3>過勞律師碎碎唸（網誌）</h3>
+                        <p>過往文章與網路資源彙整</p>
+                        <a href="https://karolushi.blogspot.com/" target="_blank">查看網誌</a>
+                    </div>
+                </div>
+                <div class="portfolio-item">
+                    <img src="project4.jpg" alt="作品四">
+                    <div class="portfolio-info">
+                        <h3>判決倉庫</h3>
+                        <p>各類實用的實務判決</p>
+                        <a href="https://karolushihome.blogspot.com/" target="_blank">查看倉庫</a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 聯絡我 -->
+        <section id="contact">
+            <h2>聯絡方式</h2>
+            <p>歡迎隨時透過以下方式與我聯繫！或於上班時間致電事務所電話：(04)2310-1213</p>
+            <div class="social-links">
+                <a href="mailto:ysklushi@gmail.com" title="Email"><i class="fas fa-envelope"></i></a>
+                <a href="https://www.facebook.com/karolushi/" target="_blank" title="Facebook"><i class="fab fa-facebook"></i></a>
+                <a href="https://lin.ee/CdDyHAV" target="_blank" title="LINE"><i class="fab fa-line"></i></a>
+            </div>
+            <div class="form-container">
+                <h3>或在此直接留言</h3>
+                <form name="contact-form" method="POST" data-netlify="true">
+                    <p>
+                        <label for="name">您的姓名：</label>
+                        <input type="text" id="name" name="name" required>
+                    </p>
+                    <p>
+                        <label for="email">您的 Email：</label>
+                        <input type="email" id="email" name="email" required>
+                    </p>
+                    <p>
+                        <label for="phone">您的聯絡電話：</label>
+                        <input type="tel" id="phone" name="phone">
+                    </p>
+                    <p>
+                        <label for="message">您的訊息內容：</label>
+                        <textarea id="message" name="message" rows="6" required></textarea>
+                    </p>
+                    <p>
+                        <button type="submit">傳送訊息</button>
+                    </p>
+                </form>
+            </div>
+        </section>
     </main>
 
-    <a href="#" id="back-to-top-btn" class="back-to-top-btn">
-        <i class="fa-solid fa-arrow-up"></i>
-        <span>回到最上</span>
-    </a>
+    <footer>
+        <p>© 2024 [楊時綱]. All Rights Reserved.</p>
+    </footer>
 
-    <script src="links.js"></script>
+    <script src="script.js"></script>
 </body>
 </html>
