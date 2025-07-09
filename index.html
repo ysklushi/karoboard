@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>我的自訂首頁</title>
+    
+    <!-- 1. 引入 Font Awesome 圖示庫 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    
+    <!-- 2. 引入你的 CSS 樣式檔案 -->
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header class="search-header">
+        <div class="search-container">
+            <form id="google-search-form" class="search-form">
+                <div class="search-box">
+                    <i class="fa-solid fa-magnifying-glass search-icon"></i>
+                    <input type="text" id="search-input" class="search-input" placeholder="在 Google 上搜尋，或輸入一個網址" autocomplete="off">
+                </div>
+                <button type="submit" style="display: none;">搜尋</button>
+            </form>
+        </div>
+    </header>
+
+    <main class="container">
+        <!-- 這個 div 將由 links.js 自動填滿 -->
+        <div id="link-container"></div>
+    </main>
+
+    <!-- 3. 引入你的 JavaScript 檔案 (所有連結資料與邏輯都在這裡) -->
+    <!-- 建議將 script.js 改名為 links.js，更能體現其作用 -->
+    <script src="links.js"></script>
+</body>
+</html>

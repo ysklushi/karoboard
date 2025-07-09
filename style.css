@@ -1,0 +1,82 @@
+/* --- CSS 樣式區 --- */
+body {
+    font-family: 'Segoe UI', 'Microsoft JhengHei', 'Helvetica Neue', sans-serif;
+    margin: 0;
+    background-color: #f8f9fa;
+    color: #333;
+}
+
+.search-header {
+    padding: 60px 20px 40px; 
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+}
+.search-container { max-width: 580px; width: 100%; }
+.search-form { width: 100%; }
+.search-box { position: relative; width: 100%; margin: 0 auto; }
+.search-icon { position: absolute; left: 20px; top: 50%; transform: translateY(-50%); color: #9aa0a6; font-size: 16px; }
+.search-input { width: 100%; padding: 12px 20px 12px 50px; font-size: 16px; border: 1px solid #dfe1e5; border-radius: 24px; box-shadow: none; transition: box-shadow 0.2s ease; box-sizing: border-box; }
+.search-input:focus { outline: none; box-shadow: 0 1px 6px rgba(32,33,36,0.28); }
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+.link-group {
+    margin-bottom: 40px;
+    padding: 25px;
+    border-radius: 12px;
+}
+
+/* 為七個群組設定專屬背景色 */
+.link-group:nth-of-type(1) { background-color: #fff1f2; } /* 淺粉紅 */
+.link-group:nth-of-type(2) { background-color: #fff3e0; } /* 淺橙色 */
+.link-group:nth-of-type(3) { background-color: #fffde7; } /* 淺黃色 */
+.link-group:nth-of-type(4) { background-color: #e8f5e9; } /* 淺綠色 */
+.link-group:nth-of-type(5) { background-color: #e3f2fd; } /* 淺藍色 */
+.link-group:nth-of-type(6) { background-color: #e8eaf6; } /* 淺靛色 */
+.link-group:nth-of-type(7) { background-color: #f3e5f5; } /* 淺紫色 */
+
+.link-group h2 {
+    margin-top: 0;
+    padding-bottom: 15px;
+    border-bottom: 1px solid #ddd;
+    color: #4a4a4a;
+    font-weight: 600;
+}
+
+.grid-container {
+    display: grid;
+    grid-template-columns: repeat(8, 1fr);
+    gap: 15px; 
+}
+
+.link-card {
+    display: block; text-decoration: none; color: inherit; background-color: #fff; border: 1px solid #eee; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 5px rgba(0,0,0,0.05); transition: all 0.2s ease-in-out; text-align: center;
+}
+.link-card:hover { transform: translateY(-5px); box-shadow: 0 8px 15px rgba(0,0,0,0.1); border-color: #a8c7fa; }
+
+.icon-container {
+    height: 100px;
+    display: flex; align-items: center; justify-content: center;
+    background-color: rgba(255, 255, 255, 0.6);
+    border-bottom: 1px solid #eee;
+}
+.icon-container i {
+    font-size: 56px; 
+    color: #5a7a9e;
+    transition: transform 0.2s ease;
+}
+.link-card:hover .icon-container i { transform: scale(1.1); }
+
+.link-card .title {
+    font-size: 15px;
+    padding: 12px 5px;
+    margin: 0;
+    font-weight: 600;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
