@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>文章整理工具 (智慧判斷版)</title>
     <style>
-        /* CSS 樣式 (部分更新) */
+        /* CSS 樣式 */
         body {
             font-family: 'Microsoft JhengHei', '微軟正黑體', sans-serif;
             background-color: #f4f7f9;
@@ -24,9 +24,10 @@
             padding: 30px 40px;
             border-radius: 12px;
             box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
-            position: relative; /* 新增：設定為相對定位，作為子元素的定位基準 */
+            position: relative; 
         }
-        /* ==================== 新增：返回連結的樣式 ==================== */
+        
+        /* ==================== 電腦版：返回連結的樣式 ==================== */
         .back-link {
             position: absolute;
             top: 35px;
@@ -34,12 +35,13 @@
             font-size: 15px;
             color: #0056b3;
             text-decoration: none;
-            transition: color 0.2s ease;
+            transition: all 0.2s ease;
         }
         .back-link:hover {
             text-decoration: underline;
         }
         /* ========================================================== */
+
         h1 {
             text-align: center;
             color: #0056b3;
@@ -121,14 +123,48 @@
             background-color: #ff6961;
             color: #212529;
         }
+
+        /* ==================== 手機版：響應式設計 ==================== */
+        /* 當螢幕寬度小於或等於 768px 時套用以下樣式 */
+        @media (max-width: 768px) {
+            .container {
+                padding: 20px;
+            }
+
+            /* 將返回連結改為懸浮按鈕 (FAB) */
+            .back-link {
+                position: fixed; /* 固定在視窗上 */
+                bottom: 25px;
+                right: 20px;
+                background-color: #5da9e9; /* 淡藍色按鈕 */
+                color: #fff;
+                padding: 12px 18px;
+                border-radius: 50px; /* 膠囊形狀 */
+                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+                font-size: 16px;
+                font-weight: bold;
+                text-decoration: none;
+                z-index: 1000; /* 確保在最上層 */
+            }
+
+            .back-link:hover {
+                text-decoration: none; /* 手機上不需要 hover 底線 */
+                opacity: 0.9;
+            }
+
+            .back-link:active {
+                transform: scale(0.95);
+            }
+        }
+        /* ========================================================== */
+
     </style>
 </head>
 <body>
 
     <div class="container">
-        <!-- ==================== 新增：返回儀表板的連結 ==================== -->
+        <!-- 這個連結會根據 CSS 和 JS 動態改變外觀和文字 -->
         <a href="https://karoboard.netlify.app/" class="back-link">返回過勞儀表板</a>
-        <!-- =========================================================== -->
         
         <h1>文章整理小幫手</h1>
         <div class="textarea-container">
@@ -174,11 +210,9 @@
         removeNumbersButton.addEventListener('click', () => {
             const originalText = inputText.value;
             if (!originalText) return;
-
             const leadingNumRegex = /^\d{1,5}\b[.)]?\s*/;
             const trailingNumRegex = /\s*\b\d{1,5}$/;
             const lines = originalText.split('\n');
-
             const processedLines = lines.map((currentLine, i, allLines) => {
                 let processed = currentLine;
                 const leadingMatch = processed.match(leadingNumRegex);
@@ -189,7 +223,6 @@
                         processed = processed.replace(leadingNumRegex, '');
                     }
                 }
-                
                 const trailingMatch = processed.match(trailingNumRegex);
                 if (trailingMatch) {
                     const prevLine = allLines[i - 1] || '';
@@ -198,10 +231,8 @@
                         processed = processed.replace(trailingNumRegex, '');
                     }
                 }
-                
                 return processed;
             });
-
             const textWithoutNumbers = processedLines.join('\n');
             outputText.value = formatText(textWithoutNumbers);
         });
@@ -209,7 +240,6 @@
         addJudgmentButton.addEventListener('click', () => {
             const rawJudgmentText = judgmentInfoInput.value;
             const currentOutput = outputText.value;
-
             if (!rawJudgmentText) {
                 alert('請先在第 3 點的欄位輸入判決字號！');
                 judgmentInfoInput.focus();
@@ -220,20 +250,14 @@
                 inputText.focus();
                 return;
             }
-            
             const judgmentRegex = /([\u4e00-\u9fa5\s]+(?:法院|分院))[\s\S]*?(\d{2,3}\s*年度\s*[\u4e00-\u9fa5]+\s*字\s*第\s*\d+\s*號)/;
-            
             const match = rawJudgmentText.match(judgmentRegex);
-
             if (match) {
                 const courtName = match[1];
                 const caseNumber = match[2];
-                
                 const cleanedJudgment = (courtName + caseNumber).replace(/\s/g, '');
                 const formattedJudgment = '（' + cleanedJudgment + '）';
-
                 outputText.value = currentOutput.trim() + '\n' + formattedJudgment;
-
             } else {
                 alert('無法從您輸入的內容中識別出標準的「法院名稱」與「判決字號」格式。\n\n請確認內容包含如「臺灣高等法院」及「112年度上字第123號」的文字。');
                 judgmentInfoInput.focus();
@@ -265,6 +289,27 @@
             outputText.value = '';
             judgmentInfoInput.value = '';
         });
+
+        // ==================== 新增：動態更改返回連結的文字 ====================
+        const backLink = document.querySelector('.back-link');
+        const mobileBreakpoint = 768; // 須與 CSS 中的斷點一致
+
+        const updateBackLinkContent = () => {
+            if (window.innerWidth <= mobileBreakpoint) {
+                // 手機版：顯示圖示和簡稱
+                backLink.innerHTML = '✨ 小幫手';
+            } else {
+                // 電腦版：顯示完整文字
+                backLink.innerText = '返回過勞儀表板';
+            }
+        };
+
+        // 頁面載入時執行一次
+        updateBackLinkContent();
+        
+        // 當視窗大小改變時再次執行
+        window.addEventListener('resize', updateBackLinkContent);
+        // =================================================================
 
     </script>
 </body>
