@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>文章整理工具 (智慧判斷版)</title>
+    <style>
+        /* CSS 樣式 */
+        body {
+            font-family: 'Microsoft JhengHei', '微軟正黑體', sans-serif;
+            background-color: #f4f7f9;
+            color: #333;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            padding: 20px;
+            min-height: 100vh;
+            margin: 0;
+        }
+        
+        /* 調整主容器，給頁首留出空間 */
+        .main-tool-wrapper {
+            width: 100%;
+            max-width: 950px;
+        }
+
+        /* ==== 新增：工具頁的頁首樣式 ==== */
+        .tool-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding: 0 10px;
+        }
+        .tool-header h1 {
+            color: #0056b3;
+            margin: 0;
+            font-size: 28px;
+        }
+        .back-link {
+            text-decoration: none;
+            background-color: #6c757d;
+            color: white;
+            padding: 10px 18px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            transition: background-color 0.2s;
+        }
+        .back-link:hover {
+            background-color: #5a6268;
+        }
+        /* ================================ */
+
+        .container {
+            width: 100%;
+            background-color: #ffffff;
+            padding: 30px 40px;
+            border-radius: 12px;
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
+            box-sizing: border-box;
+        }
+        .textarea-container {
+            margin-bottom: 20px;
+        }
+        label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 10px;
+            font-size: 1.1em;
+            color: #555;
+        }
+        textarea {
+            width: 100%;
+            height: 280px;
+            padding: 15px;
+            border: 1px solid #dcdcdc;
+            border-radius: 8px;
+            font-size: 16px;
+            line-height: 1.6;
+            box-sizing: border-box; 
+            resize: vertical;
+            transition: border-color 0.3s, box-shadow 0.3s;
+        }
+        textarea:focus {
+            outline: none;
+            border-color: #89CFF0;
+            box-shadow: 0 0 0 3px rgba(137, 207, 240, 0.3);
+        }
+        #output-text {
+            background-color: #f8f9fa; 
+        }
+        .button-group {
+            display: flex;
+            flex-wrap: wrap; 
+            gap: 15px; 
+            justify-content: center;
+            margin-top: 25px;
+        }
+        button {
+            padding: 12px 24px;
+            font-size: 16px;
+            font-weight: bold;
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.1s ease;
+            flex-grow: 1; 
+            min-width: 160px;
+        }
+        button:hover {
+            opacity: 0.85;
+        }
+        button:active {
+            transform: scale(0.97);
+        }
+        #btn-copy {
+            background-color: #89CFF0;
+            color: #212529;
+        }
+        #btn-remove-numbers {
+            background-color: #77dd77;
+            color: #212529;
+        }
+        #btn-clear {
+            background-color: #ff6961;
+            color: #212529;
+        }
+        /* 手機版適應 */
+        @media (max-width: 767px) {
+            body { padding: 10px; }
+            .tool-header { flex-direction: column; gap: 15px; }
+            .tool-header h1 { font-size: 24px; }
+            textarea { height: 200px; }
+            .container { padding: 20px; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="main-tool-wrapper">
+        <div class="tool-header">
+            <h1>文章整理小幫手</h1>
+            <a href="index.html" class="back-link">返回過勞儀表板</a>
+        </div>
+
+        <div class="container">
+            <div class="textarea-container">
+                <label for="input-text">1. 在此貼上原始文章</label>
+                <textarea id="input-text" placeholder="請將您要整理的文章內容貼在此處..."></textarea>
+            </div>
+            <div class="textarea-container">
+                <label for="output-text">2. 整理結果</label>
+                <textarea id="output-text" readonly placeholder="整理後的內容將會顯示在這裡..."></textarea>
+            </div>
+            <div class="button-group">
+                <button id="btn-copy">複製整理結果</button>
+                <button id="btn-remove-numbers">去除行首/行尾數字並整理</button>
+                <button id="btn-clear">清空所有欄位</button>
+            </div>
+        </div>
+    </div>
+
+
+    <script>
+        const inputText = document.getElementById('input-text');
+        const outputText = document.getElementById('output-text');
+        const copyButton = document.getElementById('btn-copy');
+        const removeNumbersButton = document.getElementById('btn-remove-numbers');
+        const clearButton = document.getElementById('btn-clear');
+
+        const formatText = (text) => text.replace(/\s/g, '');
+        
+        const basicFormatAndUpdate = () => {
+            outputText.value = formatText(inputText.value);
+        };
+
+        inputText.addEventListener('input', basicFormatAndUpdate);
+
+        removeNumbersButton.addEventListener('click', () => {
+            const originalText = inputText.value;
+            if (!originalText) return;
+
+            const leadingNumRegex = /^\d{1,5}\b[.)]?\s*/;
+            const trailingNumRegex = /\s*\b\d{1,5}$/;
+
+            const lines = originalText.split('\n');
+
+            const processedLines = lines.map((currentLine, i, allLines) => {
+                let processed = currentLine;
+
+                const leadingMatch = processed.match(leadingNumRegex);
+                if (leadingMatch) {
+                    const prevLine = allLines[i - 1] || '';
+                    const nextLine = allLines[i + 1] || '';
+                    if (prevLine.match(leadingNumRegex) || nextLine.match(leadingNumRegex)) {
+                        processed = processed.replace(leadingNumRegex, '');
+                    }
+                }
+                
+                const trailingMatch = processed.match(trailingNumRegex);
+                if (trailingMatch) {
+                    const prevLine = allLines[i - 1] || '';
+                    const nextLine = allLines[i + 1] || '';
+                    if (prevLine.match(trailingNumRegex) || nextLine.match(trailingNumRegex)) {
+                        processed = processed.replace(trailingNumRegex, '');
+                    }
+                }
+                
+                return processed;
+            });
+
+            const textWithoutNumbers = processedLines.join('\n');
+            outputText.value = formatText(textWithoutNumbers);
+        });
+
+        copyButton.addEventListener('click', () => {
+            const textToCopy = outputText.value;
+            if (textToCopy) {
+                navigator.clipboard.writeText(textToCopy).then(() => {
+                    const originalText = copyButton.innerText;
+                    copyButton.innerText = '已成功複製！';
+                    copyButton.style.backgroundColor = '#28a745'; 
+                    setTimeout(() => {
+                        copyButton.innerText = originalText;
+                        copyButton.style.backgroundColor = '#89CFF0'; 
+                    }, 1500); 
+                }).catch(err => {
+                    console.error('複製失敗: ', err);
+                    alert('複製失敗，您的瀏覽器可能不支援此功能，請手動複製。');
+                });
+            } else {
+                alert('沒有內容可以複製！');
+            }
+        });
+
+        clearButton.addEventListener('click', () => {
+            inputText.value = '';
+            outputText.value = '';
+        });
+
+    </script>
+</body>
+</html>

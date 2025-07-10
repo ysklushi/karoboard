@@ -257,6 +257,7 @@ body {
     visibility: hidden;
     transform: translateY(20px);
     transition: opacity 0.3s, visibility 0.3s, transform 0.3s;
+    z-index: 999;
 }
 
 .back-to-top-btn i {
@@ -271,4 +272,71 @@ body {
 
 .back-to-top-btn:hover {
     background-color: #34495e;
+}
+
+/* ============ 新增樣式區 ============ */
+
+/* 1. 頁尾版權聲明樣式 */
+.page-footer {
+    text-align: center;
+    padding: 20px;
+    margin-top: 30px;
+    background-color: #e9ecef;
+    color: #6c757d;
+    font-size: 14px;
+    border-top: 1px solid #dee2e6;
+}
+
+/* 2. 右側懸浮功能面板樣式 */
+.floating-panel {
+    position: fixed;
+    top: 50%;
+    right: 0;
+    transform: translateY(-50%);
+    z-index: 1000;
+}
+
+.panel-button {
+    display: flex;
+    align-items: center;
+    background-color: #007bff;
+    color: #fff;
+    padding: 12px;
+    text-decoration: none;
+    border-top-left-radius: 20px;
+    border-bottom-left-radius: 20px;
+    box-shadow: -2px 2px 8px rgba(0,0,0,0.2);
+    transition: all 0.3s ease;
+    white-space: nowrap;
+    overflow: hidden;
+    transform: translateX(calc(100% - 48px)); /* 預設只露出圖示 */
+}
+
+.panel-button:hover {
+    transform: translateX(0); /* 滑鼠懸浮時完全展開 */
+    background-color: #0056b3;
+}
+
+.panel-button i {
+    font-size: 20px;
+    width: 24px; /* 固定圖示寬度 */
+    text-align: center;
+}
+
+.panel-button .panel-text {
+    margin-left: 10px;
+    margin-right: 12px;
+    font-weight: 600;
+}
+
+/* 在手機小螢幕上，讓按鈕完全顯示，避免操作困難 */
+@media (max-width: 767px) {
+    .floating-panel {
+        top: auto;
+        bottom: 80px; /* 移到底部，避免跟回到頂部按鈕重疊 */
+        transform: none;
+    }
+    .panel-button {
+        transform: translateX(0);
+    }
 }
