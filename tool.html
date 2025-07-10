@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>文章整理工具 (智慧判斷版)</title>
     <style>
-        /* CSS 樣式 (所有樣式皆內建於此，不再依賴外部檔案) */
+        /* CSS 樣式 (部分更新) */
         body {
             font-family: 'Microsoft JhengHei', '微軟正黑體', sans-serif;
             background-color: #f4f7f9;
@@ -16,50 +16,36 @@
             padding: 20px;
             min-height: 100vh;
             margin: 0;
-            box-sizing: border-box;
         }
-        
-        .main-tool-wrapper {
-            width: 100%;
-            max-width: 950px;
-        }
-
-        .tool-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
-            padding: 0 10px;
-        }
-        .tool-header h1 {
-            color: #0056b3;
-            margin: 0;
-            font-size: 28px;
-        }
-        .back-link {
-            text-decoration: none;
-            background-color: #6c757d;
-            color: white;
-            padding: 10px 18px;
-            border-radius: 8px;
-            font-size: 16px;
-            font-weight: 600;
-            transition: background-color 0.2s;
-            white-space: nowrap;
-        }
-        .back-link:hover {
-            background-color: #5a6268;
-        }
-
         .container {
             width: 100%;
+            max-width: 950px;
             background-color: #ffffff;
             padding: 30px 40px;
             border-radius: 12px;
             box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
-            box-sizing: border-box;
+            position: relative; /* 新增：設定為相對定位，作為子元素的定位基準 */
         }
-        .textarea-container {
+        /* ==================== 新增：返回連結的樣式 ==================== */
+        .back-link {
+            position: absolute;
+            top: 35px;
+            right: 40px;
+            font-size: 15px;
+            color: #0056b3;
+            text-decoration: none;
+            transition: color 0.2s ease;
+        }
+        .back-link:hover {
+            text-decoration: underline;
+        }
+        /* ========================================================== */
+        h1 {
+            text-align: center;
+            color: #0056b3;
+            margin-bottom: 30px;
+        }
+        .textarea-container, .input-container {
             margin-bottom: 20px;
         }
         label {
@@ -69,19 +55,24 @@
             font-size: 1.1em;
             color: #555;
         }
-        textarea {
+        textarea, input[type="text"] {
             width: 100%;
-            height: 280px;
             padding: 15px;
             border: 1px solid #dcdcdc;
             border-radius: 8px;
             font-size: 16px;
             line-height: 1.6;
             box-sizing: border-box; 
-            resize: vertical;
             transition: border-color 0.3s, box-shadow 0.3s;
         }
-        textarea:focus {
+        textarea {
+            height: 250px;
+            resize: vertical;
+        }
+        input[type="text"] {
+            height: auto;
+        }
+        textarea:focus, input[type="text"]:focus {
             outline: none;
             border-color: #89CFF0;
             box-shadow: 0 0 0 3px rgba(137, 207, 240, 0.3);
@@ -122,56 +113,54 @@
             background-color: #77dd77;
             color: #212529;
         }
+        #btn-add-judgment {
+            background-color: #f9a825;
+            color: #212529;
+        }
         #btn-clear {
             background-color: #ff6961;
             color: #212529;
-        }
-
-        /* 手機版適應 */
-        @media (max-width: 767px) {
-            body { padding: 15px; }
-            .tool-header { 
-                flex-direction: column; 
-                gap: 15px; 
-                align-items: center;
-            }
-            .tool-header h1 { font-size: 22px; text-align: center; }
-            textarea { height: 200px; }
-            .container { padding: 20px; }
         }
     </style>
 </head>
 <body>
 
-    <div class="main-tool-wrapper">
-        <header class="tool-header">
-            <h1>文章整理小幫手</h1>
-            <a href="index.html" class="back-link">返回過勞儀表板</a>
-        </header>
+    <div class="container">
+        <!-- ==================== 新增：返回儀表板的連結 ==================== -->
+        <a href="https://karoboard.netlify.app/" class="back-link">返回過勞儀表板</a>
+        <!-- =========================================================== -->
+        
+        <h1>文章整理小幫手</h1>
+        <div class="textarea-container">
+            <label for="input-text">1. 在此貼上原始文章</label>
+            <textarea id="input-text" placeholder="請將您要整理的文章內容貼在此處..."></textarea>
+        </div>
+        <div class="textarea-container">
+            <label for="output-text">2. 整理結果</label>
+            <textarea id="output-text" readonly placeholder="整理後的內容將會顯示在這裡..."></textarea>
+        </div>
+        
+        <div class="input-container">
+            <label for="judgment-info">3. 貼上判決字號 (選填，有空格或贅字無妨)</label>
+            <input type="text" id="judgment-info" placeholder="例如：貼上「裁判字號：臺灣高等法院 112 年度上字第 123 號」即可">
+        </div>
 
-        <main class="container">
-            <div class="textarea-container">
-                <label for="input-text">1. 在此貼上原始文章</label>
-                <textarea id="input-text" placeholder="請將您要整理的文章內容貼在此處..."></textarea>
-            </div>
-            <div class="textarea-container">
-                <label for="output-text">2. 整理結果</label>
-                <textarea id="output-text" readonly placeholder="整理後的內容將會顯示在這裡..."></textarea>
-            </div>
-            <div class="button-group">
-                <button id="btn-copy">複製整理結果</button>
-                <button id="btn-remove-numbers">去除行首/行尾數字並整理</button>
-                <button id="btn-clear">清空所有欄位</button>
-            </div>
-        </main>
+        <div class="button-group">
+            <button id="btn-copy">複製整理結果</button>
+            <button id="btn-remove-numbers">去除行首/行尾數字並整理</button>
+            <button id="btn-add-judgment">添加判決字號於文章最後</button>
+            <button id="btn-clear">清空所有欄位</button>
+        </div>
     </div>
 
     <script>
-        // JavaScript 邏輯 (完全不變)
         const inputText = document.getElementById('input-text');
         const outputText = document.getElementById('output-text');
+        const judgmentInfoInput = document.getElementById('judgment-info');
+        
         const copyButton = document.getElementById('btn-copy');
         const removeNumbersButton = document.getElementById('btn-remove-numbers');
+        const addJudgmentButton = document.getElementById('btn-add-judgment');
         const clearButton = document.getElementById('btn-clear');
 
         const formatText = (text) => text.replace(/\s/g, '');
@@ -188,12 +177,10 @@
 
             const leadingNumRegex = /^\d{1,5}\b[.)]?\s*/;
             const trailingNumRegex = /\s*\b\d{1,5}$/;
-
             const lines = originalText.split('\n');
 
             const processedLines = lines.map((currentLine, i, allLines) => {
                 let processed = currentLine;
-
                 const leadingMatch = processed.match(leadingNumRegex);
                 if (leadingMatch) {
                     const prevLine = allLines[i - 1] || '';
@@ -219,6 +206,40 @@
             outputText.value = formatText(textWithoutNumbers);
         });
 
+        addJudgmentButton.addEventListener('click', () => {
+            const rawJudgmentText = judgmentInfoInput.value;
+            const currentOutput = outputText.value;
+
+            if (!rawJudgmentText) {
+                alert('請先在第 3 點的欄位輸入判決字號！');
+                judgmentInfoInput.focus();
+                return;
+            }
+            if (!currentOutput) {
+                alert('整理結果區塊是空的，請先整理文章！');
+                inputText.focus();
+                return;
+            }
+            
+            const judgmentRegex = /([\u4e00-\u9fa5\s]+(?:法院|分院))[\s\S]*?(\d{2,3}\s*年度\s*[\u4e00-\u9fa5]+\s*字\s*第\s*\d+\s*號)/;
+            
+            const match = rawJudgmentText.match(judgmentRegex);
+
+            if (match) {
+                const courtName = match[1];
+                const caseNumber = match[2];
+                
+                const cleanedJudgment = (courtName + caseNumber).replace(/\s/g, '');
+                const formattedJudgment = '（' + cleanedJudgment + '）';
+
+                outputText.value = currentOutput.trim() + '\n' + formattedJudgment;
+
+            } else {
+                alert('無法從您輸入的內容中識別出標準的「法院名稱」與「判決字號」格式。\n\n請確認內容包含如「臺灣高等法院」及「112年度上字第123號」的文字。');
+                judgmentInfoInput.focus();
+            }
+        });
+
         copyButton.addEventListener('click', () => {
             const textToCopy = outputText.value;
             if (textToCopy) {
@@ -242,7 +263,9 @@
         clearButton.addEventListener('click', () => {
             inputText.value = '';
             outputText.value = '';
+            judgmentInfoInput.value = '';
         });
+
     </script>
 </body>
 </html>
