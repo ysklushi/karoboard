@@ -274,7 +274,7 @@ body {
     background-color: #34495e;
 }
 
-/* ============ 新增/修改樣式區 ============ */
+/* ============ 新增樣式區 ============ */
 
 /* 1. 頁尾版權聲明樣式 */
 .page-footer {
@@ -299,7 +299,7 @@ body {
 .panel-button {
     display: flex;
     align-items: center;
-    background-color: #1da1f2; /* 修改：改為新的淡藍色 */
+    background-color: #007bff;
     color: #fff;
     padding: 12px;
     text-decoration: none;
@@ -314,7 +314,7 @@ body {
 
 .panel-button:hover {
     transform: translateX(0); /* 滑鼠懸浮時完全展開 */
-    background-color: #0c85d0; /* 修改：改為新藍色的深色版 */
+    background-color: #0056b3;
 }
 
 .panel-button i {
@@ -338,9 +338,5 @@ body {
     }
     .panel-button {
         transform: translateX(0);
-    }
-    /* 新增：在手機上隱藏只在電腦版顯示的文字 */
-    .desktop-only {
-        display: none;
     }
 }
