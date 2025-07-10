@@ -274,7 +274,7 @@ body {
     background-color: #34495e;
 }
 
-/* ============ 新增樣式區 ============ */
+/* ============ 修改樣式區 ============ */
 
 /* 1. 頁尾版權聲明樣式 */
 .page-footer {
@@ -294,6 +294,8 @@ body {
     right: 0;
     transform: translateY(-50%);
     z-index: 1000;
+    display: flex; /* 新增此行讓內部元素垂直排列 */
+    flex-direction: column; /* 新增此行讓內部元素垂直排列 */
 }
 
 .panel-button {
@@ -312,10 +314,28 @@ body {
     transform: translateX(calc(100% - 48px)); /* 預設只露出圖示 */
 }
 
+/* ▼▼▼ 新增：按鈕之間的間距 ▼▼▼ */
+.panel-button + .panel-button {
+    margin-top: 8px;
+}
+/* ▲▲▲ 新增：按鈕之間的間距 ▲▲▲ */
+
+
 .panel-button:hover {
     transform: translateX(0); /* 滑鼠懸浮時完全展開 */
     background-color: #0056b3;
 }
+
+/* ▼▼▼ 新增：第二個按鈕的樣式 ▼▼▼ */
+.panel-button.panel-button-alt {
+    background-color: #28a745; /* Success Green */
+}
+
+.panel-button.panel-button-alt:hover {
+    background-color: #218838; /* Darker Green */
+}
+/* ▲▲▲ 新增：第二個按鈕的樣式 ▲▲▲ */
+
 
 .panel-button i {
     font-size: 20px;

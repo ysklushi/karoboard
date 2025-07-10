@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>判決書摘錄小工具 (更新版)</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', 'Microsoft JhengHei', 'PingFang TC', sans-serif;
+            background-color: #f4f7f6;
+            color: #333;
+            line-height: 1.6;
+            margin: 0;
+            padding: 20px;
+            position: relative; 
+        }
+        .container {
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 25px;
+            background-color: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #0056b3;
+            text-align: center;
+            margin-bottom: 25px;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        .url-inputs-container {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+        .url-input-col {
+            flex: 1;
+        }
+        label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 8px;
+            color: #555;
+        }
+        input[type="url"],
+        input[type="text"],
+        textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+            font-size: 16px;
+        }
+        textarea {
+            height: 150px;
+            resize: vertical;
+        }
+        #judgmentInfo {
+            margin-top: 15px;
+            padding: 15px;
+            background-color: #e9ecef;
+            border: 1px solid #ced4da;
+            border-radius: 4px;
+            min-height: 50px;
+            color: #495057;
+            font-weight: bold;
+            display: none;
+        }
+        .info-error {
+            color: #c82333 !important;
+            background-color: #f8d7da !important;
+            border-color: #f5c6cb !important;
+        }
+        .download-section {
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #eee;
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+        }
+        .button-column {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        .btn {
+            display: inline-block;
+            padding: 12px 20px;
+            font-size: 16px;
+            font-weight: bold;
+            color: #fff;
+            background-color: #007bff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            text-align: center;
+            text-decoration: none;
+            transition: background-color 0.3s ease;
+            width: 100%;
+        }
+        .btn:hover {
+            background-color: #0056b3;
+        }
+        .btn.disabled {
+            background-color: #a0c9f7;
+            cursor: not-allowed;
+        }
+        .btn-secondary { background-color: #28a745; }
+        .btn-secondary:hover { background-color: #218838; }
+        .btn-secondary.disabled { background-color: #88c796; }
+
+        .btn-info { background-color: #17a2b8; }
+        .btn-info:hover { background-color: #138496; }
+        .btn-info.disabled { background-color: #7bcde0; }
+
+        .btn-danger { background-color: #dc3545; width: auto; }
+        .btn-danger:hover { background-color: #c82333; }
+
+        .info-text {
+            font-size: 14px;
+            color: #6c757d;
+        }
+        .clear-section {
+            margin-top: 20px;
+            text-align: right;
+        }
+        .top-right-link {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            font-size: 15px;
+            color: #007bff;
+            text-decoration: none;
+            font-weight: bold;
+        }
+        .top-right-link:hover {
+            color: #0056b3;
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+
+<!-- 修改：移除 target="_blank" -->
+<a href="https://karoboard.netlify.app/" class="top-right-link">返回過勞儀表板</a>
+
+<div class="container">
+    <h1>判決書摘錄小工具</h1>
+
+    <div class="url-inputs-container">
+        <div class="url-input-col">
+            <label for="judicialUrl">1a. 司法院判決網址</label>
+            <input type="url" id="judicialUrl" placeholder="請貼上司法院裁判書系統網址...">
+        </div>
+        <div class="url-input-col">
+            <label for="lawbankUrl">1b. 法源六法判決網址</label>
+            <input type="url" id="lawbankUrl" placeholder="請貼上法源六法判決網址...">
+        </div>
+    </div>
+    <div id="judgmentInfo"></div>
+
+    <div class="form-group">
+        <label for="judgmentContent">2. 判決內容 (任意摘錄)</label>
+        <textarea id="judgmentContent" placeholder="請在此貼上您想儲存的判決書內容摘錄..."></textarea>
+    </div>
+
+    <div class="form-group">
+        <label for="personalNotes">3. 個人筆記</label>
+        <textarea id="personalNotes" placeholder="請在此輸入您的個人筆記..."></textarea>
+    </div>
+
+    <div class="form-group">
+        <label for="customTags">4. 自訂關鍵字</label>
+        <input type="text" id="customTags" placeholder="例如：證據能力、傳聞法則、業務過失 (請用「、」分隔)">
+        <p class="info-text">輸入多個關鍵字請用全形頓號「、」分隔。</p>
+    </div>
+
+    <div class="download-section">
+        <div class="button-column">
+            <button id="downloadJudicialUrl" class="btn disabled" disabled>下載司法院捷徑 (.url)</button>
+            <button id="downloadLawbankUrl" class="btn disabled" disabled>下載法源網捷徑 (.url)</button>
+        </div>
+        <div class="button-column">
+            <button id="downloadText" class="btn btn-secondary disabled" disabled>下載摘錄文字檔 (.txt)</button>
+            <button id="copyFilenameBtn" class="btn btn-info disabled" disabled>複製相同檔名</button>
+        </div>
+    </div>
+
+    <div class="clear-section">
+        <button id="clearAllBtn" class="btn btn-danger">清空欄位</button>
+    </div>
+</div>
+
+<script>
+let parsedInfo = { date: null, court: null, caseNumber: null, fileNameBase: null };
+
+const courtMap = {
+    'TPS': '最高法院', 'TPSV': '最高法院', 'SAD': '最高行政法院', 'SADV': '最高行政法院', 'PAG': '懲戒法院', 'TPH': '臺灣高等法院', 'TPHV': '臺灣高等法院', 'TPD': '臺灣高等法院', 'TCH': '臺灣高等法院 臺中分院', 'TCHV': '臺灣高等法院 臺中分院', 'TNH': '臺灣高等法院 臺南分院', 'TNHV': '臺灣高等法院 臺南分院', 'KSH': '臺灣高等法院 高雄分院', 'KSHV': '臺灣高等法院 高雄分院', 'HLH': '臺灣高等法院 花蓮分院', 'HLHV': '臺灣高等法院 花蓮分院', 'TPB': '臺灣臺北地方法院', 'TPBV': '臺灣臺北地方法院', 'SLD': '臺灣士林地方法院', 'SLDV': '臺灣士林地方法院', 'PCD': '臺灣新北地方法院', 'PCDV': '臺灣新北地方法院', 'TYD': '臺灣桃園地方法院', 'TYDV': '臺灣桃園地方法院', 'SCD': '臺灣新竹地方法院', 'SCDV': '臺灣新竹地方法院', 'MLD': '臺灣苗栗地方法院', 'MLDV': '臺灣苗栗地方法院', 'TCD': '臺灣臺中地方法院', 'TCDV': '臺灣臺中地方法院', 'CHD': '臺灣彰化地方法院', 'CHDV': '臺灣彰化地方法院', 'NTD': '臺灣南投地方法院', 'NTDV': '臺灣南投地方法院', 'ULD': '臺灣雲林地方法院', 'ULDV': '臺灣雲林地方法院', 'CYD': '臺灣嘉義地方法院', 'CYDV': '臺灣嘉義地方法院', 'TND': '臺灣臺南地方法院', 'TNDV': '臺灣臺南地方法院', 'KSD': '臺灣高雄地方法院', 'KSDV': '臺灣高雄地方法院', 'QDD': '臺灣橋頭地方法院', 'QDDV': '臺灣橋頭地方法院', 'PTD': '臺灣屏東地方法院', 'PTDV': '臺灣屏東地方法院', 'TTD': '臺灣臺東地方法院', 'TTDV': '臺灣臺東地方法院', 'HLD': '臺灣花蓮地方法院', 'HLDV': '臺灣花蓮地方法院', 'ILD': '臺灣宜蘭地方法院', 'ILDV': '臺灣宜蘭地方法院', 'KLD': '臺灣基隆地方法院', 'KLDV': '臺灣基隆地方法院', 'PHD': '臺灣澎湖地方法院', 'PHDV': '臺灣澎湖地方法院', 'KMD': '福建金門地方法院', 'KMDV': '福建金門地方法院', 'LCD': '福建連江地方法院', 'LCDV': '福建連江地方法院', 'IPR': '智慧財產及商業法院', 'IPRV': '智慧財產及商業法院', 'KSY': '臺灣高雄少年及家事法院', 'KSYV': '臺灣高雄少年及家事法院',
+};
+
+function resetAll() {
+    document.getElementById('judgmentInfo').style.display = 'none';
+    document.getElementById('judgmentInfo').innerHTML = '';
+    document.getElementById('judgmentInfo').classList.remove('info-error');
+    document.getElementById('downloadJudicialUrl').classList.add('disabled');
+    document.getElementById('downloadJudicialUrl').disabled = true;
+    document.getElementById('downloadLawbankUrl').classList.add('disabled');
+    document.getElementById('downloadLawbankUrl').disabled = true;
+    document.getElementById('downloadText').classList.add('disabled');
+    document.getElementById('downloadText').disabled = true;
+    document.getElementById('copyFilenameBtn').classList.add('disabled');
+    document.getElementById('copyFilenameBtn').disabled = true;
+    parsedInfo = { date: null, court: null, caseNumber: null, fileNameBase: null };
+}
+
+function displaySuccess(finalInfo, judicialResult, lawbankResult) {
+    const infoDiv = document.getElementById('judgmentInfo');
+    parsedInfo = finalInfo;
+    infoDiv.innerHTML = `<strong>判決日期：</strong> ${parsedInfo.date}<br><strong>法院名稱：</strong> ${parsedInfo.court}<br><strong>判決字號：</strong> ${parsedInfo.caseNumber}`;
+    infoDiv.style.display = 'block';
+    infoDiv.classList.remove('info-error');
+    const judicialBtn = document.getElementById('downloadJudicialUrl');
+    const lawbankBtn = document.getElementById('downloadLawbankUrl');
+    const textBtn = document.getElementById('downloadText');
+    const copyBtn = document.getElementById('copyFilenameBtn');
+    if (judicialResult) {
+        judicialBtn.classList.remove('disabled');
+        judicialBtn.disabled = false;
+    }
+    if (lawbankResult) {
+        lawbankBtn.classList.remove('disabled');
+        lawbankBtn.disabled = false;
+    }
+    textBtn.classList.remove('disabled'); textBtn.disabled = false;
+    copyBtn.classList.remove('disabled'); copyBtn.disabled = false;
+}
+
+function displayError(message) {
+    const infoDiv = document.getElementById('judgmentInfo');
+    resetAll();
+    infoDiv.innerHTML = message;
+    infoDiv.style.display = 'block';
+    infoDiv.classList.add('info-error');
+}
+
+function parseJudicialUrl(urlString) {
+    let idString;
+    try { const url = new URL(urlString); idString = url.searchParams.get('id'); } catch (e) { idString = urlString; }
+    if (!idString || !idString.includes(',')) return null;
+    const decodedIdString = decodeURIComponent(idString);
+    const parts = decodedIdString.split(',');
+    if (parts.length < 5) return null;
+    const [courtCode, year, caseType, number, dateStr] = parts;
+    const formattedDate = `${dateStr.substring(0, 4)}-${dateStr.substring(4, 6)}-${dateStr.substring(6, 8)}`;
+    const courtName = courtMap[courtCode.toUpperCase()] || `未知法院(${courtCode})`;
+    const fullCaseNumber = `${year}年度${caseType}字第${number}號`;
+    return { date: formattedDate, court: courtName, caseNumber: fullCaseNumber, fileNameBase: `${formattedDate} ${courtName} ${fullCaseNumber}` };
+}
+
+function parseLawbankUrl(urlString) {
+    let paramString; let isNewFormat = false;
+    try {
+        const url = new URL(urlString);
+        if (url.hostname === 'www.lawbank.com.tw' && url.searchParams.has('id')) {
+            paramString = url.searchParams.get('id');
+        } else if (url.hostname === 'six.lawbank.com.tw' && url.pathname.startsWith('/Data/Judge/')) {
+            const rawParamString = url.pathname.substring('/Data/Judge/'.length);
+            paramString = decodeURIComponent(rawParamString);
+            isNewFormat = true;
+        } else { paramString = decodeURIComponent(urlString); }
+    } catch (e) { paramString = decodeURIComponent(urlString); }
+    if (!paramString || !paramString.includes(',')) return null;
+    const parts = paramString.split(',');
+    if (isNewFormat || parts.length >= 6) {
+        if (parts.length < 6) return null;
+        const [rocYear, caseType, number, dateStr, , courtCode] = parts;
+        const formattedDate = `${dateStr.substring(0, 4)}-${dateStr.substring(4, 6)}-${dateStr.substring(6, 8)}`;
+        const courtName = courtMap[courtCode.toUpperCase()] || `未知法院(${courtCode})`;
+        const fullCaseNumber = `${rocYear}年度${caseType}字第${number}號`;
+        return { date: formattedDate, court: courtName, caseNumber: fullCaseNumber, fileNameBase: `${formattedDate} ${courtName} ${fullCaseNumber}` };
+    } else {
+        if (parts.length < 5) return null;
+        const [courtCode, rocYear, caseType, number, dateStr] = parts;
+        const formattedDate = `${dateStr.substring(0, 4)}-${dateStr.substring(4, 6)}-${dateStr.substring(6, 8)}`;
+        const courtName = courtMap[courtCode.toUpperCase()] || `未知法院(${courtCode})`;
+        const fullCaseNumber = `${rocYear}年度${caseType}字第${number}號`;
+        return { date: formattedDate, court: courtName, caseNumber: fullCaseNumber, fileNameBase: `${formattedDate} ${courtName} ${fullCaseNumber}` };
+    }
+}
+
+function processUrls() {
+    resetAll();
+    const judicialUrl = document.getElementById('judicialUrl').value.trim();
+    const lawbankUrl = document.getElementById('lawbankUrl').value.trim();
+    if (!judicialUrl && !lawbankUrl) return;
+    let judicialResult = judicialUrl ? parseJudicialUrl(judicialUrl) : null;
+    let lawbankResult = lawbankUrl ? parseLawbankUrl(lawbankUrl) : null;
+    if (judicialUrl && !judicialResult) {
+        displayError('無法解析司法院網址，請確認格式是否正確。'); return;
+    }
+    if (lawbankUrl && !lawbankResult) {
+        displayError('無法解析法源六法判決網址，請確認格式是否正確。'); return;
+    }
+    if (judicialResult && lawbankResult) {
+        if (judicialResult.fileNameBase === lawbankResult.fileNameBase) {
+            displaySuccess(judicialResult, judicialResult, lawbankResult);
+        } else {
+            displayError('錯誤：兩個網址解析出的判決資訊不相符，請檢查。');
+        }
+    } else if (judicialResult) {
+        displaySuccess(judicialResult, judicialResult, null);
+    } else if (lawbankResult) {
+        displaySuccess(lawbankResult, null, lawbankResult);
+    }
+}
+
+document.getElementById('judicialUrl').addEventListener('input', processUrls);
+document.getElementById('lawbankUrl').addEventListener('input', processUrls);
+
+function downloadFile(filename, content, mimeType) {
+    const blob = new Blob([content], { type: mimeType });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a'); a.href = url; a.download = filename;
+    document.body.appendChild(a); a.click(); document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+}
+
+function generateFilenameBase() {
+    if (!parsedInfo.fileNameBase) return '';
+    const tagsInput = document.getElementById('customTags').value;
+    const tags = tagsInput.split('、').map(tag => tag.trim()).filter(tag => tag).join(',');
+    let filename = parsedInfo.fileNameBase;
+    if (tags) { filename += `(${tags})`; }
+    return filename;
+}
+
+document.getElementById('downloadJudicialUrl').addEventListener('click', function() {
+    if (this.disabled) return;
+    const urlValue = document.getElementById('judicialUrl').value.trim();
+    const filename = generateFilenameBase() + '_司法院.url';
+    const content = `[InternetShortcut]\nURL=${urlValue}`;
+    downloadFile(filename, content, 'application/internet-shortcut');
+});
+
+document.getElementById('downloadLawbankUrl').addEventListener('click', function() {
+    if (this.disabled) return;
+    const urlValue = document.getElementById('lawbankUrl').value.trim();
+    const filename = generateFilenameBase() + '_法源六法.url';
+    const content = `[InternetShortcut]\nURL=${urlValue}`;
+    downloadFile(filename, content, 'application/internet-shortcut');
+});
+
+document.getElementById('downloadText').addEventListener('click', function() {
+    if (this.disabled) return;
+    const judgmentExcerpt = document.getElementById('judgmentContent').value;
+    const personalNotes = document.getElementById('personalNotes').value;
+    const tagsInput = document.getElementById('customTags').value;
+    const filename = generateFilenameBase() + '.txt';
+    const fileContent = `【${parsedInfo.fileNameBase}】\n\n【判決摘錄】\n${judgmentExcerpt}\n\n【個人筆記】\n${personalNotes}\n\n【關鍵字】\n${tagsInput}\n\n\n====================================================================================================`;
+    downloadFile(filename, fileContent, 'text/plain;charset=utf-8');
+});
+
+document.getElementById('copyFilenameBtn').addEventListener('click', function() {
+    if (this.disabled) return;
+    const filenameToCopy = generateFilenameBase();
+    if (navigator.clipboard) {
+        navigator.clipboard.writeText(filenameToCopy).then(() => {
+            const originalText = this.innerHTML; this.innerHTML = '已複製！';
+            setTimeout(() => { this.innerHTML = originalText; }, 1500);
+        }).catch(err => {
+            console.error('無法複製檔名: ', err); alert('複製失敗！');
+        });
+    } else {
+        alert('您的瀏覽器不支援自動複製功能。');
+    }
+});
+
+document.getElementById('clearAllBtn').addEventListener('click', function() {
+    document.getElementById('judicialUrl').value = '';
+    document.getElementById('lawbankUrl').value = '';
+    document.getElementById('judgmentContent').value = '';
+    document.getElementById('personalNotes').value = '';
+    document.getElementById('customTags').value = '';
+    resetAll();
+    document.getElementById('judicialUrl').focus();
+});
+</script>
+
+</body>
+</html>
