@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>文章整理工具 (智慧判斷版)</title>
     <style>
-        /* CSS 樣式 (維持不變) */
+        /* CSS 樣式 (部分更新) */
         body {
             font-family: 'Microsoft JhengHei', '微軟正黑體', sans-serif;
             background-color: #f4f7f9;
@@ -24,7 +24,22 @@
             padding: 30px 40px;
             border-radius: 12px;
             box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
+            position: relative; /* 新增：設定為相對定位，作為子元素的定位基準 */
         }
+        /* ==================== 新增：返回連結的樣式 ==================== */
+        .back-link {
+            position: absolute;
+            top: 35px;
+            right: 40px;
+            font-size: 15px;
+            color: #0056b3;
+            text-decoration: none;
+            transition: color 0.2s ease;
+        }
+        .back-link:hover {
+            text-decoration: underline;
+        }
+        /* ========================================================== */
         h1 {
             text-align: center;
             color: #0056b3;
@@ -111,6 +126,10 @@
 <body>
 
     <div class="container">
+        <!-- ==================== 新增：返回儀表板的連結 ==================== -->
+        <a href="https://karoboard.netlify.app/" class="back-link">返回過勞儀表板</a>
+        <!-- =========================================================== -->
+        
         <h1>文章整理小幫手</h1>
         <div class="textarea-container">
             <label for="input-text">1. 在此貼上原始文章</label>
@@ -122,7 +141,7 @@
         </div>
         
         <div class="input-container">
-            <label for="judgment-info">3. 貼上判決字號 (選填，夾雜空格或贅字無妨)</label>
+            <label for="judgment-info">3. 貼上判決字號 (選填)</label>
             <input type="text" id="judgment-info" placeholder="例如：貼上「裁判字號：臺灣高等法院 112 年度上字第 123 號」即可">
         </div>
 
@@ -152,7 +171,6 @@
 
         inputText.addEventListener('input', basicFormatAndUpdate);
 
-        // ==================== 全新智慧判斷邏輯 (維持不變) ====================
         removeNumbersButton.addEventListener('click', () => {
             const originalText = inputText.value;
             if (!originalText) return;
@@ -187,9 +205,7 @@
             const textWithoutNumbers = processedLines.join('\n');
             outputText.value = formatText(textWithoutNumbers);
         });
-        // ========================================================
 
-        // ==================== 更新：添加判決字號邏輯 (智慧提取版) ====================
         addJudgmentButton.addEventListener('click', () => {
             const rawJudgmentText = judgmentInfoInput.value;
             const currentOutput = outputText.value;
@@ -204,34 +220,25 @@
                 inputText.focus();
                 return;
             }
-
-            // 1. 定義用來提取關鍵資訊的正規表示式
-            // - 第1個捕獲組 `(...)`：捕獲法院名稱 (以"院"或"分院"結尾)
-            // - `[\s\S]*?`：非貪婪地匹配中間任何贅字 (如：案號、裁判字號： 等)
-            // - 第2個捕獲組 `(...)`：捕獲判決字號本身 (年+年度+字別+第+號)
+            
             const judgmentRegex = /([\u4e00-\u9fa5\s]+(?:法院|分院))[\s\S]*?(\d{2,3}\s*年度\s*[\u4e00-\u9fa5]+\s*字\s*第\s*\d+\s*號)/;
             
             const match = rawJudgmentText.match(judgmentRegex);
 
             if (match) {
-                // 2. 如果匹配成功，組合捕獲到的資訊
-                const courtName = match[1]; // e.g., "臺灣高等法院 "
-                const caseNumber = match[2]; // e.g., "112 年度上字第 123 號"
+                const courtName = match[1];
+                const caseNumber = match[2];
                 
-                // 組合後再去除所有空白
                 const cleanedJudgment = (courtName + caseNumber).replace(/\s/g, '');
                 const formattedJudgment = '（' + cleanedJudgment + '）';
 
-                // 3. 附加到輸出結果
                 outputText.value = currentOutput.trim() + '\n' + formattedJudgment;
 
             } else {
-                // 4. 如果匹配失敗，提示使用者
                 alert('無法從您輸入的內容中識別出標準的「法院名稱」與「判決字號」格式。\n\n請確認內容包含如「臺灣高等法院」及「112年度上字第123號」的文字。');
                 judgmentInfoInput.focus();
             }
         });
-        // ======================================================================
 
         copyButton.addEventListener('click', () => {
             const textToCopy = outputText.value;
