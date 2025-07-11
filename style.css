@@ -276,7 +276,7 @@ body {
     background-color: #34495e;
 }
 
-/* ============ 功能區樣式 (已修正) ============ */
+/* ============ 功能區樣式 ============ */
 
 /* 1. 頁尾版權聲明樣式 */
 .page-footer {
@@ -354,9 +354,10 @@ body {
         border-radius: 20px;
         box-shadow: 0 4px 12px rgba(0,0,0,0.3);
         cursor: pointer;
-        /* 清除電腦版設定 */
-        flex-direction: row; 
-        gap: 5px;
+        /* ▼▼▼▼▼ 核心修改處 ▼▼▼▼▼ */
+        flex-direction: column; /* 將收合的圖示改為垂直排列 */
+        gap: 8px;              /* 調整圖示間的垂直間距 */
+        /* ▲▲▲▲▲ 核心修改處 ▲▲▲▲▲ */
     }
 
     /* 手機上，按鈕預設不展開，且取消 hover 展開效果 */
@@ -386,10 +387,9 @@ body {
         box-shadow: none;
         padding: 0;
         right: 0;
-        flex-direction: column; /* 展開後垂直排列 */
-        gap: 8px;
         bottom: 80px; /* 微調位置 */
         cursor: default;
+        /* 展開後方向不變，所以不用再寫 flex-direction: column */
     }
     
     .floating-panel.is-expanded .panel-button {
