@@ -246,31 +246,31 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-    // 4. 處理手機版懸浮面板點擊展開/收合的功能 (已修正邏輯)
+    // 4. 處理手機版懸浮面板的展開與收合 (最終修正版)
     const floatingPanel = document.querySelector('.floating-panel');
     if (floatingPanel) {
-        floatingPanel.addEventListener('click', function(event) {
+        // 使用一個全域的點擊監聽器來處理展開和收合
+        document.addEventListener('click', function(event) {
             // 此功能只在手機寬度下作用
             if (window.innerWidth > 767) {
                 return;
             }
+            
+            const isClickInsidePanel = floatingPanel.contains(event.target);
+            const isPanelExpanded = floatingPanel.classList.contains('is-expanded');
 
-            // 檢查點擊的是否為按鈕
-            const clickedButton = event.target.closest('a.panel-button');
-
-            // 如果面板是收合狀態
-            if (!floatingPanel.classList.contains('is-expanded')) {
-                // 阻止任何預設行為 (例如點擊到按鈕時的跳轉)
+            // 情況一：面板是收合的，且使用者點擊了面板本身
+            if (!isPanelExpanded && isClickInsidePanel) {
+                // 阻止點擊按鈕時的預設跳轉行為，只進行展開
                 event.preventDefault();
-                // 為面板加上 'is-expanded' class 來展開它
                 floatingPanel.classList.add('is-expanded');
-            } 
-            // 如果面板是展開狀態，且點擊的不是按鈕 (即點擊了面板的空白背景處)
-            else if (!clickedButton) {
-                 // 則收合面板
+            }
+            // 情況二：面板是展開的，且使用者點擊了面板「以外」的區域
+            else if (isPanelExpanded && !isClickInsidePanel) {
+                // 就收合面板
                 floatingPanel.classList.remove('is-expanded');
             }
-            // 如果面板是展開狀態，且點擊的是按鈕，則此處不做任何事，讓連結正常跳轉
+            // 情況三：面板是展開的，且使用者點擊了面板「以內」的按鈕，則此處不做任何事，讓連結的預設跳轉行為正常發生。
         });
     }
 });
