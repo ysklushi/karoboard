@@ -4,7 +4,7 @@
 // ==                                                             ==
 // =================================================================
 const linkData = [
-    // ... (linkData 的內容保持不變，此處省略) ...
+    // ... (此處的 linkData 內容與您原有的相同，故省略) ...
     {
         groupName: "第一群組：律師常用",
         links: [
@@ -191,7 +191,6 @@ document.addEventListener('DOMContentLoaded', function() {
             event.preventDefault(); 
             const query = lawbankSearchInput.value.trim();
             if (query === '') return;
-            // 採納您發現的、更好更通用的網址格式！
             const lawbankSearchURL = `https://six.lawbank.com.tw/Search/Result?keywords=${encodeURIComponent(query)}`;
             window.open(lawbankSearchURL, '_blank');
         });
@@ -214,10 +213,7 @@ document.addEventListener('DOMContentLoaded', function() {
             
             group.links.forEach(link => {
                 const placeholderClass = link.status === 'placeholder' ? ' is-placeholder' : '';
-                // ▼▼▼ 修改處 ▼▼▼
-                // 在此處理文字，將 '(' 替換為 '<br>(' 來強制換行
                 const formattedName = link.name.replace('(', '<br>(');
-                // ▲▲▲ 修改處 ▲▲▲
 
                 linksHTML += `<a href="${link.url}" target="_blank" class="link-card${placeholderClass}" title="${link.name}"><div class="icon-container"><i class="${link.icon}"></i></div><p class="title">${formattedName}</p></a>`;
             });
@@ -247,6 +243,34 @@ document.addEventListener('DOMContentLoaded', function() {
                 top: 0,
                 behavior: 'smooth' 
             });
+        });
+    }
+
+    // 4. 處理手機版懸浮面板點擊展開/收合的功能 (已修正邏輯)
+    const floatingPanel = document.querySelector('.floating-panel');
+    if (floatingPanel) {
+        floatingPanel.addEventListener('click', function(event) {
+            // 此功能只在手機寬度下作用
+            if (window.innerWidth > 767) {
+                return;
+            }
+
+            // 檢查點擊的是否為按鈕
+            const clickedButton = event.target.closest('a.panel-button');
+
+            // 如果面板是收合狀態
+            if (!floatingPanel.classList.contains('is-expanded')) {
+                // 阻止任何預設行為 (例如點擊到按鈕時的跳轉)
+                event.preventDefault();
+                // 為面板加上 'is-expanded' class 來展開它
+                floatingPanel.classList.add('is-expanded');
+            } 
+            // 如果面板是展開狀態，且點擊的不是按鈕 (即點擊了面板的空白背景處)
+            else if (!clickedButton) {
+                 // 則收合面板
+                floatingPanel.classList.remove('is-expanded');
+            }
+            // 如果面板是展開狀態，且點擊的是按鈕，則此處不做任何事，讓連結正常跳轉
         });
     }
 });

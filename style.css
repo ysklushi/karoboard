@@ -210,6 +210,8 @@ body {
     .icon-container i { font-size: 48px; }
     .link-card .title { font-size: 14px; }
 }
+
+/* 包含手機版通用樣式 */
 @media (max-width: 767px) {
     .page-header {
         padding: 12px 20px;
@@ -274,7 +276,7 @@ body {
     background-color: #34495e;
 }
 
-/* ============ 修改樣式區 ============ */
+/* ============ 功能區樣式 (已修正) ============ */
 
 /* 1. 頁尾版權聲明樣式 */
 .page-footer {
@@ -287,15 +289,16 @@ body {
     border-top: 1px solid #dee2e6;
 }
 
-/* 2. 右側懸浮功能面板樣式 */
+/* 2. 右側懸浮功能面板樣式 (電腦版) */
 .floating-panel {
     position: fixed;
     top: 50%;
     right: 0;
     transform: translateY(-50%);
     z-index: 1000;
-    display: flex; /* 新增此行讓內部元素垂直排列 */
-    flex-direction: column; /* 新增此行讓內部元素垂直排列 */
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
 }
 
 .panel-button {
@@ -314,32 +317,21 @@ body {
     transform: translateX(calc(100% - 48px)); /* 預設只露出圖示 */
 }
 
-/* ▼▼▼ 新增：按鈕之間的間距 ▼▼▼ */
-.panel-button + .panel-button {
-    margin-top: 8px;
-}
-/* ▲▲▲ 新增：按鈕之間的間距 ▲▲▲ */
-
-
 .panel-button:hover {
     transform: translateX(0); /* 滑鼠懸浮時完全展開 */
     background-color: #0056b3;
 }
 
-/* ▼▼▼ 新增：第二個按鈕的樣式 ▼▼▼ */
 .panel-button.panel-button-alt {
-    background-color: #28a745; /* Success Green */
+    background-color: #28a745;
 }
-
 .panel-button.panel-button-alt:hover {
-    background-color: #218838; /* Darker Green */
+    background-color: #218838;
 }
-/* ▲▲▲ 新增：第二個按鈕的樣式 ▲▲▲ */
-
 
 .panel-button i {
     font-size: 20px;
-    width: 24px; /* 固定圖示寬度 */
+    width: 24px;
     text-align: center;
 }
 
@@ -349,14 +341,66 @@ body {
     font-weight: 600;
 }
 
-/* 在手機小螢幕上，讓按鈕完全顯示，避免操作困難 */
+/* 3. 懸浮面板在手機上的專用樣式 */
 @media (max-width: 767px) {
+    /* 改變整個面板的位置和外觀，使其成為一個可點擊的整體 */
     .floating-panel {
         top: auto;
-        bottom: 80px; /* 移到底部，避免跟回到頂部按鈕重疊 */
+        bottom: 85px; 
+        right: 15px; 
         transform: none;
+        background-color: rgba(44, 62, 80, 0.8);
+        padding: 10px;
+        border-radius: 20px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+        cursor: pointer;
+        /* 清除電腦版設定 */
+        flex-direction: row; 
+        gap: 5px;
     }
+
+    /* 手機上，按鈕預設不展開，且取消 hover 展開效果 */
     .panel-button {
-        transform: translateX(0);
+        transform: none;
+        padding: 8px;
+        border-radius: 50%; /* 變成圓形圖示按鈕 */
+        transition: transform 0.3s ease;
+        box-shadow: none;
+    }
+    .panel-button:hover {
+        transform: none; /* 取消 hover 效果 */
+        background-color: #007bff; /* 維持原色 */
+    }
+    .panel-button.panel-button-alt:hover {
+        background-color: #28a745; /* 維持原色 */
+    }
+
+    /* 手機上，隱藏文字，只留圖示 */
+    .panel-button .panel-text {
+        display: none;
+    }
+
+    /* 當面板被點擊後，添加 .is-expanded class 時的樣式 */
+    .floating-panel.is-expanded {
+        background-color: transparent;
+        box-shadow: none;
+        padding: 0;
+        right: 0;
+        flex-direction: column; /* 展開後垂直排列 */
+        gap: 8px;
+        bottom: 80px; /* 微調位置 */
+        cursor: default;
+    }
+    
+    .floating-panel.is-expanded .panel-button {
+        transform: translateX(0); /* 讓按鈕完全展開 */
+        box-shadow: -2px 2px 8px rgba(0,0,0,0.2);
+        padding: 12px; /* 恢復 padding */
+        border-radius: 20px 0 0 20px; /* 恢復圓角 */
+    }
+    
+    /* 展開後，讓文字顯示出來 */
+    .floating-panel.is-expanded .panel-text {
+        display: block;
     }
 }
