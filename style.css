@@ -329,6 +329,15 @@ body {
     background-color: #218838;
 }
 
+/* ▼▼▼ 新增第三個按鈕的樣式 ▼▼▼ */
+.panel-button.panel-button-warning {
+    background-color: #fd7e14; /* 橘色 */
+}
+.panel-button.panel-button-warning:hover {
+    background-color: #e67e22; /* 深橘色 */
+}
+/* ▲▲▲ 新增第三個按鈕的樣式 ▲▲▲ */
+
 .panel-button i {
     font-size: 20px;
     width: 24px;
@@ -374,6 +383,10 @@ body {
     }
     .panel-button.panel-button-alt:hover {
         background-color: #28a745; /* 維持原色 */
+    }
+    /* ▼▼▼ 新增按鈕在手機上的 hover 顏色 ▼▼▼ */
+    .panel-button.panel-button-warning:hover {
+        background-color: #fd7e14; /* 維持原色 */
     }
 
     /* 手機上，隱藏文字，只留圖示 */
