@@ -15,6 +15,31 @@
         <a href="https://karolushi.netlify.app" class="header-link">楊時綱律師</a>
     </div>
 
+    <!-- ▼▼▼▼▼ 天氣查詢工具 ▼▼▼▼▼ -->
+    <div class="top-widget-section">
+        <div class="weather-widget">
+            <div class="location-selector">
+                <label for="location-select">地區天氣概況</label>
+                <select id="location-select">
+                    <option value="01">臺北市</option><option value="02">新北市</option><option value="03">基隆市</option><option value="04">桃園市</option><option value="05">新竹縣</option><option value="06">新竹市</option><option value="07">苗栗縣</option><option value="08">臺中市</option><option value="09">彰化縣</option><option value="10">南投縣</option><option value="11">雲林縣</option><option value="12">嘉義縣</option><option value="13">嘉義市</option><option value="14">臺南市</option><option value="15">高雄市</option><option value="16">屏東縣</option><option value="17">宜蘭縣</option><option value="18">花蓮縣</option><option value="19">臺東縣</option><option value="20">澎湖縣</option><option value="21">金門縣</option><option value="22">連江縣</option>
+                </select>
+            </div>
+            
+            <div id="day-toggle-btn" class="day-toggle-container" title="切換預報時段">
+                <span class="toggle-label today active">今</span>
+                <div class="toggle-switch">
+                    <div class="toggle-knob"></div>
+                </div>
+                <span class="toggle-label tomorrow">明</span>
+            </div>
+
+            <div id="weather-display" class="weather-info-box">
+                <p class="placeholder">請選擇地點以查詢天氣...</p>
+            </div>
+        </div>
+    </div>
+    <!-- ▲▲▲▲▲ 天氣查詢工具 ▲▲▲▲▲ -->
+
     <a href="https://karolushi.netlify.app" class="mobile-home-link">前往 楊時綱律師 個人網站</a>
 
     <nav id="quick-nav" class="quick-nav-container"></nav>
@@ -36,7 +61,6 @@
                 </div>
                 <button type="submit" style="display: none;">搜尋</button>
             </form>
-
         </div>
     </header>
 
@@ -44,31 +68,25 @@
         <div id="link-container"></div>
     </main>
 
-    <!-- ==== 修改：懸浮功能面板 ==== -->
     <div class="floating-panel">
         <a href="tool.html" target="_blank" class="panel-button" title="文章整理小幫手">
             <i class="fa-solid fa-wand-magic-sparkles"></i>
             <span class="panel-text">文章整理小幫手</span>
         </a>
-        <!-- ▼▼▼ 新增的按鈕 ▼▼▼ -->
         <a href="judgment_tool.html" target="_blank" class="panel-button panel-button-alt" title="判決摘錄小工具">
             <i class="fa-solid fa-file-invoice"></i>
             <span class="panel-text">判決摘錄小工具</span>
         </a>
-        <!-- ▲▲▲ 新增的按鈕 ▲▲▲ -->
     </div>
-    <!-- ========================= -->
 
     <a href="#" id="back-to-top-btn" class="back-to-top-btn">
         <i class="fa-solid fa-arrow-up"></i>
         <span>回到最上</span>
     </a>
 
-    <!-- ==== 新增：頁尾版權聲明 ==== -->
     <footer class="page-footer">
         © 2024 楊時綱. All Rights Reserved.
     </footer>
-    <!-- ========================== -->
 
     <script src="links.js"></script>
 </body>

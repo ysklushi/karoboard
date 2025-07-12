@@ -4,7 +4,7 @@
 // ==                                                             ==
 // =================================================================
 const linkData = [
-    // ... (此處的 linkData 內容與您原有的相同，故省略) ...
+    // ... (您原有的 linkData 內容，此處省略以保持簡潔) ...
     {
         groupName: "第一群組：律師常用",
         links: [
@@ -164,10 +164,11 @@ const linkData = [
     }
 ];
 
-
-// --- 以下是自動化腳本 ---
 document.addEventListener('DOMContentLoaded', function() {
     
+    // --- 原有的儀表板功能 (搜尋、連結生成、回到頂部、懸浮面板) ---
+    // (此處省略您原有的程式碼，只顯示整合後的結果)
+
     // 1a. 處理 Google 搜尋框功能
     const searchForm = document.getElementById('google-search-form');
     const searchInput = document.getElementById('search-input');
@@ -206,18 +207,13 @@ document.addEventListener('DOMContentLoaded', function() {
         
         linkData.forEach((group, index) => {
             const groupId = `group-${index}`;
-            
             quickNavHTML += `<a href="#${groupId}" class="quick-nav-tag">${group.groupName}</a>`;
-            
             linksHTML += `<section id="${groupId}" class="link-group"><h2>${group.groupName}</h2><div class="grid-container">`;
-            
             group.links.forEach(link => {
                 const placeholderClass = link.status === 'placeholder' ? ' is-placeholder' : '';
                 const formattedName = link.name.replace('(', '<br>(');
-
                 linksHTML += `<a href="${link.url}" target="_blank" class="link-card${placeholderClass}" title="${link.name}"><div class="icon-container"><i class="${link.icon}"></i></div><p class="title">${formattedName}</p></a>`;
             });
-
             linksHTML += `</div></section>`;
         });
 
@@ -227,50 +223,125 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // 3. 處理回到最上層按鈕的邏輯
     const backToTopButton = document.getElementById('back-to-top-btn');
-    
     if (backToTopButton) {
         window.addEventListener('scroll', () => {
-            if (window.scrollY > 300) {
-                backToTopButton.classList.add('show');
-            } else {
-                backToTopButton.classList.remove('show');
-            }
+            backToTopButton.classList.toggle('show', window.scrollY > 300);
         });
-
         backToTopButton.addEventListener('click', (event) => {
             event.preventDefault();
-            window.scrollTo({
-                top: 0,
-                behavior: 'smooth' 
-            });
+            window.scrollTo({ top: 0, behavior: 'smooth' });
         });
     }
 
-    // 4. 處理手機版懸浮面板的展開與收合 (最終修正版)
+    // 4. 處理手機版懸浮面板的展開與收合
     const floatingPanel = document.querySelector('.floating-panel');
     if (floatingPanel) {
-        // 使用一個全域的點擊監聽器來處理展開和收合
         document.addEventListener('click', function(event) {
-            // 此功能只在手機寬度下作用
-            if (window.innerWidth > 767) {
-                return;
-            }
-            
+            if (window.innerWidth > 767) return;
             const isClickInsidePanel = floatingPanel.contains(event.target);
             const isPanelExpanded = floatingPanel.classList.contains('is-expanded');
-
-            // 情況一：面板是收合的，且使用者點擊了面板本身
             if (!isPanelExpanded && isClickInsidePanel) {
-                // 阻止點擊按鈕時的預設跳轉行為，只進行展開
                 event.preventDefault();
                 floatingPanel.classList.add('is-expanded');
-            }
-            // 情況二：面板是展開的，且使用者點擊了面板「以外」的區域
-            else if (isPanelExpanded && !isClickInsidePanel) {
-                // 就收合面板
+            } else if (isPanelExpanded && !isClickInsidePanel) {
                 floatingPanel.classList.remove('is-expanded');
             }
-            // 情況三：面板是展開的，且使用者點擊了面板「以內」的按鈕，則此處不做任何事，讓連結的預設跳轉行為正常發生。
         });
+    }
+
+    // =================================================================
+    // ==== 天氣查詢小工具的程式碼開始 ====
+    // =================================================================
+
+    const locationSelect = document.getElementById('location-select');
+    const weatherDisplay = document.getElementById('weather-display');
+    const dayToggleButton = document.getElementById('day-toggle-btn');
+    const todayLabel = dayToggleButton.querySelector('.toggle-label.today');
+    const tomorrowLabel = dayToggleButton.querySelector('.toggle-label.tomorrow');
+
+    // 確保這些天氣相關的元素都存在才執行後續程式碼
+    if (locationSelect && weatherDisplay && dayToggleButton) {
+
+        const ICONS = {
+            sun: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>`,
+            cloud: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M18 10h-1.26A8 8 0 1 0 9 20h9a5 5 0 0 0 0-10z"></path></svg>`,
+            cloudy: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M20 16.58A5 5 0 0 0 18 7h-1.26A8 8 0 1 0 4 15.25"></path></svg>`,
+            'cloud-rain': `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M20 16.58A5 5 0 0 0 18 7h-1.26A8 8 0 1 0 4 15.25"></path><path d="M8 19v1"></path><path d="M8 14v1"></path><path d="M16 19v1"></path><path d="M16 14v1"></path><path d="M12 21v1"></path><path d="M12 16v1"></path></svg>`,
+            'cloud-lightning': `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M20 16.58A5 5 0 0 0 18 7h-1.26A8 8 0 1 0 4 15.25"></path><path d="m13 12-3 5h4l-3 5"></path></svg>`,
+            snowflake: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="2" x2="12" y2="6"></line><line x1="12" y1="18" x2="12" y2="22"></line><line x1="4.93" y1="4.93" x2="7.76" y2="7.76"></line><line x1="16.24" y1="16.24" x2="19.07" y2="19.07"></line><line x1="2" y1="12" x2="6" y2="12"></line><line x1="18" y1="12" x2="22" y2="12"></line><line x1="4.93" y1="19.07" x2="7.76" y2="16.24"></line><line x1="16.24" y1="7.76" x2="19.07" y2="4.93"></line></svg>`,
+        };
+
+        function getWeatherIcon(description) {
+            if (description.includes('雷')) return ICONS['cloud-lightning'];
+            if (description.includes('雨')) return ICONS['cloud-rain'];
+            if (description.includes('雪')) return ICONS.snowflake;
+            if (description.includes('多雲')) return ICONS.cloudy;
+            if (description.includes('晴')) return ICONS.sun;
+            if (description.includes('陰') || description.includes('雲')) return ICONS.cloud;
+            return ICONS.cloud;
+        }
+
+        let allForecasts = [];
+        let currentDayIndex = 0;
+
+        function renderWeather(dayIndex) {
+            if (!allForecasts[dayIndex]) return;
+            const forecast = allForecasts[dayIndex];
+            const iconSvg = getWeatherIcon(forecast.description);
+            const html = `
+                <div class="weather-row">
+                    <span class="weather-icon">${iconSvg}</span>
+                    <span class="description">${forecast.description}</span>
+                    <span class="temperature">溫度: ${forecast.temperature}</span>
+                    <span class="pop">降雨機率: ${forecast.pop}</span>
+                </div>
+            `;
+            weatherDisplay.innerHTML = html;
+        }
+
+        function updateToggleVisuals() {
+            dayToggleButton.classList.toggle('toggled', currentDayIndex === 1);
+            todayLabel.classList.toggle('active', currentDayIndex === 0);
+            tomorrowLabel.classList.toggle('active', currentDayIndex === 1);
+        }
+        
+        async function fetchAndDisplayWeather(cityId) {
+            weatherDisplay.innerHTML = `<p class="loading">查詢中...</p>`;
+            dayToggleButton.classList.add('disabled');
+            allForecasts = [];
+            currentDayIndex = 0;
+            updateToggleVisuals();
+            
+            const apiEndpoint = `/api/rss-weather?cityId=${cityId}`;
+
+            try {
+                const response = await fetch(apiEndpoint);
+                if (!response.ok) throw new Error('伺服器回應錯誤');
+                
+                allForecasts = await response.json();
+                if (!Array.isArray(allForecasts) || allForecasts.length === 0) {
+                    throw new Error('資料格式不正確');
+                }
+                renderWeather(0);
+                if (allForecasts.length > 1) {
+                    dayToggleButton.classList.remove('disabled');
+                }
+            } catch (error) {
+                weatherDisplay.innerHTML = `<p class="error">查詢失敗：${error.message}</p>`;
+            }
+        }
+
+        dayToggleButton.addEventListener('click', () => {
+            if (dayToggleButton.classList.contains('disabled')) return;
+            currentDayIndex = 1 - currentDayIndex;
+            renderWeather(currentDayIndex);
+            updateToggleVisuals();
+        });
+
+        locationSelect.addEventListener('change', (event) => {
+            fetchAndDisplayWeather(event.target.value);
+        });
+
+        fetchAndDisplayWeather(locationSelect.value);
     }
 });
