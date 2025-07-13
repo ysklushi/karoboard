@@ -37,7 +37,6 @@ body {
     text-decoration: underline;
 }
 
-/* ▼▼▼ 新增：音樂播放器相關樣式 ▼▼▼ */
 .header-right-panel {
     display: flex;
     align-items: center;
@@ -53,7 +52,7 @@ body {
     align-items: center;
     cursor: pointer;
     transition: all 0.3s ease;
-    background-color: #6c757d; /* 初始狀態：淺灰色 */
+    background-color: #6c757d;
     border: 2px solid rgba(255, 255, 255, 0.2);
     box-shadow: inset 0 1px 2px rgba(0,0,0,0.2), 0 1px 1px rgba(255,255,255,0.1);
 }
@@ -69,22 +68,74 @@ body {
     transition: color 0.3s ease;
 }
 
-/* 音樂播放中的狀態 */
 .music-icon-container.playing {
-    background-color: #f1c40f; /* 播放狀態：亮黃色 */
+    background-color: #f1c40f;
     border-color: rgba(255, 255, 255, 0.5);
     box-shadow: 0 0 12px rgba(241, 196, 15, 0.8), 0 0 8px rgba(241, 196, 15, 0.6), inset 0 1px 1px rgba(255,255,255,0.4);
 }
 
 .music-icon-container.playing i {
-    color: #2c3e50; /* 深色圖示以求對比 */
+    color: #2c3e50;
 }
-/* ▲▲▲ 新增 ▲▲▲ */
 
 
-/* === 新增：手機版專用連結的樣式 === */
+/* ▼▼▼ 修改：跑馬燈樣式更新，以支援電腦/手機不同動畫 ▼▼▼ */
+.marquee-container {
+    background-color: #34495e; /* 比 header 稍淺的顏色 */
+    color: #ecf0f1;
+    padding: 10px 0;
+    overflow: hidden;
+    white-space: nowrap;
+    box-shadow: inset 0 2px 5px rgba(0,0,0,0.2);
+}
+
+.marquee-text {
+    display: inline-block;
+    margin: 0;
+    font-size: 15px;
+    /* 統一預設從螢幕右側外開始 */
+    transform: translateX(100vw);
+    will-change: transform; /* 優化動畫效能 */
+}
+
+/* 當滑鼠懸浮在跑馬燈上時，暫停當前動畫 */
+.marquee-container:hover .marquee-text {
+    animation-play-state: paused;
+}
+
+/* 觸發動畫的 class */
+.marquee-text.is-animating {
+    /* 電腦版預設動畫：滑入並停止 (動畫內容由 JS 動態生成) */
+    animation: slide-in-and-stop 20s linear 1 forwards;
+}
+
+/* 【手機版專用】 當螢幕寬度小於 768px 時，覆寫動畫效果 */
+@media (max-width: 767px) {
+    .marquee-text.is-animating {
+        /* 手機版動畫：改為傳統的無限滾動 */
+        animation: marquee-scroll-mobile 30s linear infinite;
+    }
+}
+
+/* 動畫 1：電腦版 - 滑入中央停止 (此 keyframes 的內容會由 JS 動態生成) */
+@keyframes slide-in-and-stop {
+    /* from 和 to 的值將由 JavaScript 動態填入 */
+}
+
+/* 動畫 2：手機版 - 傳統滾動 */
+@keyframes marquee-scroll-mobile {
+    from {
+        transform: translateX(100vw);
+    }
+    to {
+        transform: translateX(-100%);
+    }
+}
+/* ▲▲▲ 修改完成 ▲▲▲ */
+
+
 .mobile-home-link {
-    display: none; /* 關鍵：預設（電腦版）隱藏 */
+    display: none;
     background-color: #34495e;
     color: #fff;
     text-align: center;
@@ -99,7 +150,6 @@ body {
     background-color: #4a6572;
 }
 
-/* 快速導航列樣式 */
 .quick-nav-container {
     background-color: #f8f9fa;
     padding: 10px 20px;
@@ -256,12 +306,11 @@ body {
     .link-card .title { font-size: 14px; }
 }
 
-/* 包含手機版通用樣式 */
 @media (max-width: 767px) {
     .page-header {
         padding: 12px 20px;
         text-align: center;
-        flex-direction: column; /* 讓標題和時間在上方 */
+        flex-direction: column;
         gap: 10px;
     }
     .page-header h1 {
@@ -271,20 +320,15 @@ body {
         display: none;
     }
     .header-right-panel {
-        /* 在手機上，右側面板因為只剩一個隱藏的連結，所以可以不用特別設定 */
         display: none;
     }
     .mobile-home-link {
         display: block;
     }
-
-    /* ▼▼▼ 新增：確保手機版音樂圖示維持置中 ▼▼▼ */
     #music-toggle-button {
-        align-self: center; /* 在其父容器(column)中水平置中 */
-        margin-top: 10px; /* 與上方的時間區塊產生間距 */
+        align-self: center;
+        margin-top: 10px;
     }
-    /* ▲▲▲ 新增 ▲▲▲ */
-
     .icon-container { height: 80px; }
     .icon-container i { font-size: 40px; }
     .link-card .title { font-size: 12px; min-height: 32px; }
@@ -372,11 +416,11 @@ body {
     transition: all 0.3s ease;
     white-space: nowrap;
     overflow: hidden;
-    transform: translateX(calc(100% - 48px)); /* 預設只露出圖示 */
+    transform: translateX(calc(100% - 48px));
 }
 
 .panel-button:hover {
-    transform: translateX(0); /* 滑鼠懸浮時完全展開 */
+    transform: translateX(0);
     background-color: #0056b3;
 }
 
@@ -387,14 +431,12 @@ body {
     background-color: #218838;
 }
 
-/* ▼▼▼ 新增第三個按鈕的樣式 ▼▼▼ */
 .panel-button.panel-button-warning {
-    background-color: #fd7e14; /* 橘色 */
+    background-color: #fd7e14;
 }
 .panel-button.panel-button-warning:hover {
-    background-color: #e67e22; /* 深橘色 */
+    background-color: #e67e22;
 }
-/* ▲▲▲ 新增第三個按鈕的樣式 ▲▲▲ */
 
 .panel-button i {
     font-size: 20px;
@@ -410,7 +452,6 @@ body {
 
 /* 3. 懸浮面板在手機上的專用樣式 */
 @media (max-width: 767px) {
-    /* 改變整個面板的位置和外觀，使其成為一個可點擊的整體 */
     .floating-panel {
         top: auto;
         bottom: 85px; 
@@ -421,84 +462,66 @@ body {
         border-radius: 20px;
         box-shadow: 0 4px 12px rgba(0,0,0,0.3);
         cursor: pointer;
-        /* ▼▼▼▼▼ 核心修改處 ▼▼▼▼▼ */
-        flex-direction: column; /* 將收合的圖示改為垂直排列 */
-        gap: 8px;              /* 調整圖示間的垂直間距 */
-        /* ▲▲▲▲▲ 核心修改處 ▲▲▲▲▲ */
+        flex-direction: column;
+        gap: 8px;
     }
-
-    /* 手機上，按鈕預設不展開，且取消 hover 展開效果 */
     .panel-button {
         transform: none;
         padding: 8px;
-        border-radius: 50%; /* 變成圓形圖示按鈕 */
+        border-radius: 50%;
         transition: transform 0.3s ease;
         box-shadow: none;
     }
     .panel-button:hover {
-        transform: none; /* 取消 hover 效果 */
-        background-color: #007bff; /* 維持原色 */
+        transform: none;
+        background-color: #007bff;
     }
     .panel-button.panel-button-alt:hover {
-        background-color: #28a745; /* 維持原色 */
+        background-color: #28a745;
     }
-    /* ▼▼▼ 新增按鈕在手機上的 hover 顏色 ▼▼▼ */
     .panel-button.panel-button-warning:hover {
-        background-color: #fd7e14; /* 維持原色 */
+        background-color: #fd7e14;
     }
-
-    /* 手機上，隱藏文字，只留圖示 */
     .panel-button .panel-text {
         display: none;
     }
-
-    /* 當面板被點擊後，添加 .is-expanded class 時的樣式 */
     .floating-panel.is-expanded {
         background-color: transparent;
         box-shadow: none;
         padding: 0;
         right: 0;
-        bottom: 80px; /* 微調位置 */
+        bottom: 80px;
         cursor: default;
-        /* 展開後方向不變，所以不用再寫 flex-direction: column */
     }
-    
     .floating-panel.is-expanded .panel-button {
-        transform: translateX(0); /* 讓按鈕完全展開 */
+        transform: translateX(0);
         box-shadow: -2px 2px 8px rgba(0,0,0,0.2);
-        padding: 12px; /* 恢復 padding */
-        border-radius: 20px 0 0 20px; /* 恢復圓角 */
+        padding: 12px;
+        border-radius: 20px 0 0 20px;
     }
-    
-    /* 展開後，讓文字顯示出來 */
     .floating-panel.is-expanded .panel-text {
         display: block;
     }
 }
 
-/* ▼▼▼ 修改處：標題與時間的排版和樣式 (已更新為方案三) ▼▼▼ */
 .header-left-panel {
     display: flex;
-    align-items: center; /* 讓標題和時間垂直對齊 */
-    gap: 30px; /* 標題和時間之間的間距，已加大 */
+    align-items: center;
+    gap: 30px;
 }
 
-/* 方案三：精緻金屬蝕刻感 */
 .split-flap-display {
     display: flex;
-    /* 使用非常細微的線性漸變來模擬光澤 */
     background: linear-gradient(to bottom, #283440, #202a35);
     padding: 8px 15px;
     border-radius: 6px;
-    /* 選擇一個較柔和的灰色調藍色 */
     color: #a7bed1; 
     font-family: 'Roboto Mono', monospace;
-    font-size: 18px; /* 比標題的 24px 小 */
+    font-size: 18px;
     font-weight: 500;
-    /* 多層次內陰影模擬凹陷效果 */
     box-shadow: 
-        inset 0 1px 2px rgba(0, 0, 0, 0.5), /* 頂部深色陰影 */
-        inset 0 -1px 1px rgba(255, 255, 255, 0.1); /* 底部微弱高光 */
+        inset 0 1px 2px rgba(0, 0, 0, 0.5),
+        inset 0 -1px 1px rgba(255, 255, 255, 0.1);
     border: 1px solid #1a232c;
     letter-spacing: 1px;
 }
@@ -515,15 +538,13 @@ body {
     100% { transform: translateY(0); opacity: 1; }
 }
 
-/* 在手機版上縮小時間字體，維持排版美觀 */
 @media (max-width: 767px) {
     .header-left-panel {
-        flex-direction: column; /* 在手機上讓標題和時間上下排列 */
+        flex-direction: column;
         gap: 8px;
     }
     .split-flap-display {
-        font-size: 14px; /* 在手機上再縮小一點 */
+        font-size: 14px;
         padding: 6px 12px;
     }
 }
-/* ▲▲▲ 修改處 ▲▲▲ */

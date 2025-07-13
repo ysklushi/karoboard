@@ -100,45 +100,46 @@
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             
-            // ▼▼▼ 修正：改用 ZenQuotes API 抓取名言，並強化錯誤處理 ▼▼▼
+            // ▼▼▼ 修正：跑馬燈動畫邏輯，根據螢幕寬度執行不同動畫 ▼▼▼
             async function fetchQuoteAndAnimate() {
                 const marqueeContainer = document.getElementById('marquee-container');
                 const marqueeText = document.getElementById('marquee-text-dynamic');
                 
-                // --- 1. 抓取名言內容 ---
-                // 使用 ZenQuotes 的隨機名言 API，並透過 allorigins.win 代理以避免 CORS 問題
+                // --- 1. 抓取名言內容 (維持 ZenQuotes API) ---
                 const targetUrl = 'https://zenquotes.io/api/random';
                 const proxyUrl = `https://api.allorigins.win/get?url=${encodeURIComponent(targetUrl)}`;
 
                 try {
                     const response = await fetch(proxyUrl, { cache: 'no-cache' });
                     if (!response.ok) throw new Error(`網路請求失敗: ${response.status}`);
-                    
                     const data = await response.json();
-                    if (!data.contents) throw new Error('代理伺服器無法取得內容');
-
-                    // ZenQuotes API 回傳的內容是 JSON 格式的字串，需要再解析一次
                     const quoteData = JSON.parse(data.contents);
                     
                     if (quoteData && quoteData.length > 0) {
-                        const quote = quoteData[0].q;  // 名言內容
-                        const author = quoteData[0].a; // 作者
+                        const quote = quoteData[0].q;
+                        const author = quoteData[0].a;
                         marqueeText.textContent = `"${quote}" — ${author}`;
                     } else {
                         throw new Error('無法從 API 解析名言內容');
                     }
                 } catch (error) {
                     console.error('抓取 ZenQuotes 名言時發生錯誤:', error);
-                    // 如果抓取失敗，顯示一句預設的東方哲學名言
                     marqueeText.textContent = '讀取每日名言失敗，將顯示預設內容。 "The journey of a thousand miles begins with a single step." — Lao Tzu';
                 }
 
-                // --- 2. 動畫控制邏輯 (維持不變) ---
-                marqueeText.classList.remove('is-scrolling', 'is-centering');
-                void marqueeText.offsetWidth;
+                // --- 2. 簡化後的動畫控制邏輯 ---
+                // 重設動畫
+                marqueeText.classList.remove('is-animating');
+                void marqueeText.offsetWidth; // 強制瀏覽器重新渲染
 
-                const handleFirstAnimationEnd = () => {
-                    marqueeText.classList.remove('is-scrolling');
+                // 判斷螢幕寬度
+                const isMobile = window.innerWidth <= 767;
+
+                if (isMobile) {
+                    // 【手機版】直接套用 CSS 中定義好的滾動動畫
+                    // 不需動態產生 keyframes
+                } else {
+                    // 【電腦版】動態計算終點並產生 keyframes
                     const containerWidth = marqueeContainer.offsetWidth;
                     const textWidth = marqueeText.offsetWidth;
                     const finalPosition = (containerWidth - textWidth) / 2;
@@ -149,17 +150,17 @@
                         dynamicStyle.id = 'marquee-dynamic-styles';
                         document.head.appendChild(dynamicStyle);
                     }
+                    // 動態寫入動畫的終點
                     dynamicStyle.innerHTML = `
-                        @keyframes scroll-to-center {
-                            from { transform: translateX(${containerWidth}px); }
+                        @keyframes slide-in-and-stop {
+                            from { transform: translateX(100vw); }
                             to { transform: translateX(${finalPosition}px); }
                         }
                     `;
-                    void marqueeText.offsetWidth;
-                    marqueeText.classList.add('is-centering');
-                };
-                marqueeText.addEventListener('animationend', handleFirstAnimationEnd, { once: true });
-                marqueeText.classList.add('is-scrolling');
+                }
+
+                // 啟動動畫
+                marqueeText.classList.add('is-animating');
             }
             // ▲▲▲ 修改完成 ▲▲▲
 
