@@ -15,7 +15,6 @@
 <body>
 
     <div class="page-header">
-        <!-- ▼▼▼ 修改處：將音樂圖示移入左側面板 ▼▼▼ -->
         <div class="header-left-panel">
             <h1>過勞儀表板</h1>
             <div id="datetime-container">
@@ -23,18 +22,19 @@
                     <!-- JavaScript 會自動填入內容 -->
                 </div>
             </div>
-            <!-- 音樂圖示已從右側移動到此處 -->
             <div id="music-toggle-button" class="music-icon-container" title="播放/暫停背景音樂">
                 <i class="fa-solid fa-music"></i>
             </div>
         </div>
-        <!-- ▲▲▲ 修改處 ▲▲▲ -->
-
-        <!-- ▼▼▼ 修改處：右側面板現在只剩下律師連結 ▼▼▼ -->
         <div class="header-right-panel">
             <a href="https://karolushi.netlify.app" class="header-link">楊時綱律師</a>
         </div>
-        <!-- ▲▲▲ 修改處 ▲▲▲ -->
+    </div>
+
+    <div class="marquee-container" id="marquee-container">
+        <p class="marquee-text" id="marquee-text-dynamic">
+            每日名言載入中...
+        </p>
     </div>
 
     <a href="https://karolushi.netlify.app" class="mobile-home-link">前往 楊時綱律師 個人網站</a>
@@ -76,12 +76,10 @@
             <i class="fa-solid fa-file-invoice"></i>
             <span class="panel-text">判決摘錄小工具</span>
         </a>
-        <!-- ▼▼▼ 新增的第三個按鈕 ▼▼▼ -->
         <a href="https://touchstorm.netlify.app/" target="_blank" class="panel-button panel-button-warning" title="即時法律新聞">
             <i class="fa-solid fa-newspaper"></i>
             <span class="panel-text">即時法律新聞</span>
         </a>
-        <!-- ▲▲▲ 新增的第三個按鈕 ▲▲▲ -->
     </div>
     <!-- ========================= -->
 
@@ -96,16 +94,83 @@
     </footer>
     <!-- ========================== -->
 
-    <!-- ▼▼▼ 新增：隱藏的 audio 元素，用於播放音樂 ▼▼▼ -->
     <audio id="background-audio" preload="auto"></audio>
-    <!-- ▲▲▲ 新增 ▲▲▲ -->
 
     <script src="links.js"></script>
-
-    <!-- ▼▼▼ 修改處：在原有 script 中加入音樂播放器邏輯 ▼▼▼ -->
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            // 原有的時間面板邏輯
+            
+            // ▼▼▼ 修正：改用 ZenQuotes API 抓取名言，並強化錯誤處理 ▼▼▼
+            async function fetchQuoteAndAnimate() {
+                const marqueeContainer = document.getElementById('marquee-container');
+                const marqueeText = document.getElementById('marquee-text-dynamic');
+                
+                // --- 1. 抓取名言內容 ---
+                // 使用 ZenQuotes 的隨機名言 API，並透過 allorigins.win 代理以避免 CORS 問題
+                const targetUrl = 'https://zenquotes.io/api/random';
+                const proxyUrl = `https://api.allorigins.win/get?url=${encodeURIComponent(targetUrl)}`;
+
+                try {
+                    const response = await fetch(proxyUrl, { cache: 'no-cache' });
+                    if (!response.ok) throw new Error(`網路請求失敗: ${response.status}`);
+                    
+                    const data = await response.json();
+                    if (!data.contents) throw new Error('代理伺服器無法取得內容');
+
+                    // ZenQuotes API 回傳的內容是 JSON 格式的字串，需要再解析一次
+                    const quoteData = JSON.parse(data.contents);
+                    
+                    if (quoteData && quoteData.length > 0) {
+                        const quote = quoteData[0].q;  // 名言內容
+                        const author = quoteData[0].a; // 作者
+                        marqueeText.textContent = `"${quote}" — ${author}`;
+                    } else {
+                        throw new Error('無法從 API 解析名言內容');
+                    }
+                } catch (error) {
+                    console.error('抓取 ZenQuotes 名言時發生錯誤:', error);
+                    // 如果抓取失敗，顯示一句預設的東方哲學名言
+                    marqueeText.textContent = '讀取每日名言失敗，將顯示預設內容。 "The journey of a thousand miles begins with a single step." — Lao Tzu';
+                }
+
+                // --- 2. 動畫控制邏輯 (維持不變) ---
+                marqueeText.classList.remove('is-scrolling', 'is-centering');
+                void marqueeText.offsetWidth;
+
+                const handleFirstAnimationEnd = () => {
+                    marqueeText.classList.remove('is-scrolling');
+                    const containerWidth = marqueeContainer.offsetWidth;
+                    const textWidth = marqueeText.offsetWidth;
+                    const finalPosition = (containerWidth - textWidth) / 2;
+
+                    let dynamicStyle = document.getElementById('marquee-dynamic-styles');
+                    if (!dynamicStyle) {
+                        dynamicStyle = document.createElement('style');
+                        dynamicStyle.id = 'marquee-dynamic-styles';
+                        document.head.appendChild(dynamicStyle);
+                    }
+                    dynamicStyle.innerHTML = `
+                        @keyframes scroll-to-center {
+                            from { transform: translateX(${containerWidth}px); }
+                            to { transform: translateX(${finalPosition}px); }
+                        }
+                    `;
+                    void marqueeText.offsetWidth;
+                    marqueeText.classList.add('is-centering');
+                };
+                marqueeText.addEventListener('animationend', handleFirstAnimationEnd, { once: true });
+                marqueeText.classList.add('is-scrolling');
+            }
+            // ▲▲▲ 修改完成 ▲▲▲
+
+
+            // 頁面載入時，立刻執行一次
+            fetchQuoteAndAnimate();
+            // 設定每小時 (3600000 毫秒) 執行一次
+            setInterval(fetchQuoteAndAnimate, 3600000);
+
+
+            // ▼▼▼ 日期與時間的完整邏輯 (維持不變) ▼▼▼
             const display = document.getElementById('split-flap-display');
             if (display) {
                 let previousString = '';
@@ -119,7 +184,6 @@
                     const minutes = now.getMinutes().toString().padStart(2, '0');
                     const weekdays = ["週日", "週一", "週二", "週三", "週四", "週五", "週六"];
                     const weekday = weekdays[now.getDay()];
-
                     const newString = `${year}年 ${month}月${day}日 (${weekday}) ${hours}:${minutes}`;
 
                     if (previousString === '') {
@@ -131,12 +195,10 @@
                     if (newString !== previousString) {
                         const chars = display.querySelectorAll('.char');
                         const len = Math.min(newString.length, chars.length);
-
                         for (let i = 0; i < len; i++) {
                             if (newString[i] !== previousString[i]) {
                                 chars[i].innerHTML = newString[i] === ' ' ? ' ' : newString[i];
                                 chars[i].classList.add('updated');
-                                
                                 ((charElement) => {
                                     setTimeout(() => {
                                         charElement.classList.remove('updated');
@@ -147,79 +209,66 @@
                         previousString = newString;
                     }
                 }
-                
                 setInterval(updateSplitFlap, 1000);
                 updateSplitFlap();
             }
+            // ▲▲▲ 日期邏輯結束 ▲▲▲
 
-            // ▼▼▼ 新增：音樂播放器邏輯 ▼▼▼
+            // ▼▼▼ 音樂播放器的完整邏輯 (維持不變) ▼▼▼
             const musicToggleButton = document.getElementById('music-toggle-button');
             const audioPlayer = document.getElementById('background-audio');
+            if (musicToggleButton && audioPlayer) {
+                const musicPlaylist = [
+                    'music/background-music-calm-soft-340445.mp3',
+                    'music/background-music-soft-calm-336543.mp3',
+                    'music/background-music-soft-calm-ambient-335501.mp3',
+                    'music/no-copyright-music-soft-background-370295.mp3',
+                    'music/positive-ambient-background-ambient-euphoria-252100.mp3',
+                    'music/soft-background-music-368633.mp3'
+                ];
 
-            // 【已更新】音樂播放清單，路徑指向 music 資料夾
-            const musicPlaylist = [
-                'music/background-music-calm-soft-340445.mp3',
-                'music/background-music-soft-calm-336543.mp3',
-                'music/background-music-soft-calm-ambient-335501.mp3',
-                'music/no-copyright-music-soft-background-370295.mp3',
-                'music/positive-ambient-background-ambient-euphoria-252100.mp3',
-                'music/soft-background-music-368633.mp3'
-            ];
+                let currentTrackIndex = 0;
+                let isPlaying = false;
 
-            let currentTrackIndex = 0;
-            let isPlaying = false;
-
-            // 載入第一首歌曲
-            if (musicPlaylist.length > 0) {
-                audioPlayer.src = musicPlaylist[currentTrackIndex];
-            }
-            
-            // 播放/暫停功能
-            function togglePlayPause() {
-                if (musicPlaylist.length === 0) {
-                    alert('音樂播放清單是空的！');
-                    return;
+                if (musicPlaylist.length > 0) {
+                    audioPlayer.src = musicPlaylist[currentTrackIndex];
+                }
+                
+                function togglePlayPause() {
+                    if (musicPlaylist.length === 0) {
+                        alert('音樂播放清單是空的！');
+                        return;
+                    }
+                    const audioIsPaused = audioPlayer.paused;
+                    if (audioIsPaused) {
+                        audioPlayer.play().catch(error => {
+                            console.error("音樂播放失敗:", error);
+                        });
+                    } else {
+                        audioPlayer.pause();
+                    }
                 }
 
-                const audioIsPaused = audioPlayer.paused;
-                if (audioIsPaused) {
-                    audioPlayer.play().catch(error => {
-                        console.error("音樂播放失敗:", error);
-                        // 瀏覽器可能會因為使用者尚未互動而阻止自動播放
-                    });
-                } else {
-                    audioPlayer.pause();
+                function playNextTrack() {
+                    currentTrackIndex = (currentTrackIndex + 1) % musicPlaylist.length;
+                    audioPlayer.src = musicPlaylist[currentTrackIndex];
+                    audioPlayer.play();
                 }
-            }
 
-            // 播放下一首歌曲
-            function playNextTrack() {
-                currentTrackIndex = (currentTrackIndex + 1) % musicPlaylist.length;
-                audioPlayer.src = musicPlaylist[currentTrackIndex];
-                audioPlayer.play();
-            }
+                musicToggleButton.addEventListener('click', togglePlayPause);
+                audioPlayer.addEventListener('ended', playNextTrack);
 
-            // 監聽按鈕點擊
-            if(musicToggleButton) musicToggleButton.addEventListener('click', togglePlayPause);
-            
-            // 監聽音訊播放結束事件，自動播放下一首
-            if(audioPlayer) audioPlayer.addEventListener('ended', playNextTrack);
-
-            // 監聽音訊的實際播放與暫停事件，以同步UI狀態
-            if(audioPlayer) {
                 audioPlayer.onplaying = function() {
                     isPlaying = true;
-                    if(musicToggleButton) musicToggleButton.classList.add('playing');
+                    musicToggleButton.classList.add('playing');
                 };
                 audioPlayer.onpause = function() {
                     isPlaying = false;
-                    if(musicToggleButton) musicToggleButton.classList.remove('playing');
+                    musicToggleButton.classList.remove('playing');
                 };
             }
-            // ▲▲▲ 新增：音樂播放器邏輯 ▲▲▲
+            // ▲▲▲ 音樂邏輯結束 ▲▲▲
         });
     </script>
-    <!-- ▲▲▲ 修改處 ▲▲▲ -->
-
 </body>
 </html>
