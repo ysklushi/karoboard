@@ -419,25 +419,30 @@ body {
     }
 }
 
-/* ▼▼▼ 新增處：標題與時間的排版和樣式 ▼▼▼ */
+/* ▼▼▼ 修改處：標題與時間的排版和樣式 (已更新為方案三) ▼▼▼ */
 .header-left-panel {
     display: flex;
     align-items: center; /* 讓標題和時間垂直對齊 */
     gap: 25px; /* 標題和時間之間的間距 */
 }
 
-/* 構想二：Split-Flap Display 樣式 */
+/* 方案三：精緻金屬蝕刻感 */
 .split-flap-display {
     display: flex;
-    background-color: #203141;
+    /* 使用非常細微的線性漸變來模擬光澤 */
+    background: linear-gradient(to bottom, #283440, #202a35);
     padding: 8px 15px;
     border-radius: 6px;
-    color: #e0f2f1; /* 帶點青色的白色，更柔和 */
-    font-family: 'Roboto Mono', monospace; /* 使用等寬字體，確保對齊 */
+    /* 選擇一個較柔和的灰色調藍色 */
+    color: #a7bed1; 
+    font-family: 'Roboto Mono', monospace;
     font-size: 18px; /* 比標題的 24px 小 */
     font-weight: 500;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.4) inset;
-    border: 1px solid rgba(255,255,255,0.1);
+    /* 多層次內陰影模擬凹陷效果 */
+    box-shadow: 
+        inset 0 1px 2px rgba(0, 0, 0, 0.5), /* 頂部深色陰影 */
+        inset 0 -1px 1px rgba(255, 255, 255, 0.1); /* 底部微弱高光 */
+    border: 1px solid #1a232c;
     letter-spacing: 1px;
 }
 .split-flap-display .char {
@@ -464,4 +469,4 @@ body {
         padding: 6px 12px;
     }
 }
-/* ▲▲▲ 新增處 ▲▲▲ */
+/* ▲▲▲ 修改處 ▲▲▲ */
