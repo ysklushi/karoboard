@@ -37,6 +37,51 @@ body {
     text-decoration: underline;
 }
 
+/* ▼▼▼ 新增：音樂播放器相關樣式 ▼▼▼ */
+.header-right-panel {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.music-icon-container {
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    background-color: #6c757d; /* 初始狀態：淺灰色 */
+    border: 2px solid rgba(255, 255, 255, 0.2);
+    box-shadow: inset 0 1px 2px rgba(0,0,0,0.2), 0 1px 1px rgba(255,255,255,0.1);
+}
+
+.music-icon-container:hover {
+    transform: scale(1.1);
+    opacity: 0.9;
+}
+
+.music-icon-container i {
+    color: #fff;
+    font-size: 16px;
+    transition: color 0.3s ease;
+}
+
+/* 音樂播放中的狀態 */
+.music-icon-container.playing {
+    background-color: #f1c40f; /* 播放狀態：亮黃色 */
+    border-color: rgba(255, 255, 255, 0.5);
+    box-shadow: 0 0 12px rgba(241, 196, 15, 0.8), 0 0 8px rgba(241, 196, 15, 0.6), inset 0 1px 1px rgba(255,255,255,0.4);
+}
+
+.music-icon-container.playing i {
+    color: #2c3e50; /* 深色圖示以求對比 */
+}
+/* ▲▲▲ 新增 ▲▲▲ */
+
+
 /* === 新增：手機版專用連結的樣式 === */
 .mobile-home-link {
     display: none; /* 關鍵：預設（電腦版）隱藏 */
@@ -225,6 +270,11 @@ body {
     .header-link {
         display: none;
     }
+    /* ▼▼▼ 新增：確保右側面板在手機上也能居中顯示 ▼▼▼ */
+    .header-right-panel {
+        justify-content: center;
+    }
+    /* ▲▲▲ 新增 ▲▲▲ */
     .mobile-home-link {
         display: block;
     }

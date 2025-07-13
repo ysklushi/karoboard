@@ -15,7 +15,6 @@
 <body>
 
     <div class="page-header">
-        <!-- ▼▼▼ 修改處：使用新結構同時容納標題和時間 ▼▼▼ -->
         <div class="header-left-panel">
             <h1>過勞儀表板</h1>
             <div id="datetime-container">
@@ -24,8 +23,14 @@
                 </div>
             </div>
         </div>
+        <!-- ▼▼▼ 修改處：新增右側面板，包含音樂圖示和原本的連結 ▼▼▼ -->
+        <div class="header-right-panel">
+            <div id="music-toggle-button" class="music-icon-container" title="播放/暫停背景音樂">
+                <i class="fa-solid fa-music"></i>
+            </div>
+            <a href="https://karolushi.netlify.app" class="header-link">楊時綱律師</a>
+        </div>
         <!-- ▲▲▲ 修改處 ▲▲▲ -->
-        <a href="https://karolushi.netlify.app" class="header-link">楊時綱律師</a>
     </div>
 
     <a href="https://karolushi.netlify.app" class="mobile-home-link">前往 楊時綱律師 個人網站</a>
@@ -87,62 +92,127 @@
     </footer>
     <!-- ========================== -->
 
+    <!-- ▼▼▼ 新增：隱藏的 audio 元素，用於播放音樂 ▼▼▼ -->
+    <audio id="background-audio" preload="auto"></audio>
+    <!-- ▲▲▲ 新增 ▲▲▲ -->
+
     <script src="links.js"></script>
 
-    <!-- ▼▼▼ 修改處：更新為構想二的 JavaScript 邏輯 ▼▼▼ -->
+    <!-- ▼▼▼ 修改處：在原有 script 中加入音樂播放器邏輯 ▼▼▼ -->
     <script>
-        // links.js 會先執行，然後這個 script 會在 DOM 載入後執行
-        // 為了確保所有元素都已存在，將我們的邏輯放在 DOMContentLoaded 事件中
         document.addEventListener('DOMContentLoaded', function() {
+            // 原有的時間面板邏輯
             const display = document.getElementById('split-flap-display');
-            if (!display) return; // 如果找不到元素，就直接結束，避免錯誤
+            if (display) {
+                let previousString = '';
 
-            let previousString = '';
+                function updateSplitFlap() {
+                    const now = new Date();
+                    const year = now.getFullYear();
+                    const month = (now.getMonth() + 1).toString().padStart(2, '0');
+                    const day = now.getDate().toString().padStart(2, '0');
+                    const hours = now.getHours().toString().padStart(2, '0');
+                    const minutes = now.getMinutes().toString().padStart(2, '0');
+                    const weekdays = ["週日", "週一", "週二", "週三", "週四", "週五", "週六"];
+                    const weekday = weekdays[now.getDay()];
 
-            function updateSplitFlap() {
-                const now = new Date();
-                const year = now.getFullYear();
-                const month = (now.getMonth() + 1).toString().padStart(2, '0');
-                const day = now.getDate().toString().padStart(2, '0');
-                const hours = now.getHours().toString().padStart(2, '0');
-                const minutes = now.getMinutes().toString().padStart(2, '0');
-                const weekdays = ["週日", "週一", "週二", "週三", "週四", "週五", "週六"];
-                const weekday = weekdays[now.getDay()];
+                    const newString = `${year}年 ${month}月${day}日 (${weekday}) ${hours}:${minutes}`;
 
-                const newString = `${year}年 ${month}月${day}日 (${weekday}) ${hours}:${minutes}`;
+                    if (previousString === '') {
+                        display.innerHTML = newString.split('').map(char => `<span class="char">${char === ' ' ? ' ' : char}</span>`).join('');
+                        previousString = newString;
+                        return;
+                    }
 
-                // 第一次初始化
-                if (previousString === '') {
-                    display.innerHTML = newString.split('').map(char => `<span class="char">${char === ' ' ? ' ' : char}</span>`).join('');
-                    previousString = newString;
+                    if (newString !== previousString) {
+                        const chars = display.querySelectorAll('.char');
+                        const len = Math.min(newString.length, chars.length);
+
+                        for (let i = 0; i < len; i++) {
+                            if (newString[i] !== previousString[i]) {
+                                chars[i].innerHTML = newString[i] === ' ' ? ' ' : newString[i];
+                                chars[i].classList.add('updated');
+                                
+                                ((charElement) => {
+                                    setTimeout(() => {
+                                        charElement.classList.remove('updated');
+                                    }, 500);
+                                })(chars[i]);
+                            }
+                        }
+                        previousString = newString;
+                    }
+                }
+                
+                setInterval(updateSplitFlap, 1000);
+                updateSplitFlap();
+            }
+
+            // ▼▼▼ 新增：音樂播放器邏輯 ▼▼▼
+            const musicToggleButton = document.getElementById('music-toggle-button');
+            const audioPlayer = document.getElementById('background-audio');
+
+            // 【已更新】音樂播放清單，路徑指向 music 資料夾
+            const musicPlaylist = [
+                'music/background-music-calm-soft-340445.mp3',
+                'music/background-music-soft-calm-336543.mp3',
+                'music/background-music-soft-calm-ambient-335501.mp3',
+                'music/no-copyright-music-soft-background-370295.mp3',
+                'music/positive-ambient-background-ambient-euphoria-252100.mp3',
+                'music/soft-background-music-368633.mp3'
+            ];
+
+            let currentTrackIndex = 0;
+            let isPlaying = false;
+
+            // 載入第一首歌曲
+            if (musicPlaylist.length > 0) {
+                audioPlayer.src = musicPlaylist[currentTrackIndex];
+            }
+            
+            // 播放/暫停功能
+            function togglePlayPause() {
+                if (musicPlaylist.length === 0) {
+                    alert('音樂播放清單是空的！');
                     return;
                 }
 
-                // 更新變動的字元
-                if (newString !== previousString) {
-                    const chars = display.querySelectorAll('.char');
-                    // 確保字串長度一致，避免錯誤
-                    const len = Math.min(newString.length, chars.length);
-
-                    for (let i = 0; i < len; i++) {
-                        if (newString[i] !== previousString[i]) {
-                            chars[i].innerHTML = newString[i] === ' ' ? ' ' : newString[i];
-                            chars[i].classList.add('updated');
-                            
-                            // 立即執行函式來捕捉當前的 char 元素
-                            ((charElement) => {
-                                setTimeout(() => {
-                                    charElement.classList.remove('updated');
-                                }, 500);
-                            })(chars[i]);
-                        }
-                    }
-                    previousString = newString;
+                const audioIsPaused = audioPlayer.paused;
+                if (audioIsPaused) {
+                    audioPlayer.play().catch(error => {
+                        console.error("音樂播放失敗:", error);
+                        // 瀏覽器可能會因為使用者尚未互動而阻止自動播放
+                    });
+                } else {
+                    audioPlayer.pause();
                 }
             }
+
+            // 播放下一首歌曲
+            function playNextTrack() {
+                currentTrackIndex = (currentTrackIndex + 1) % musicPlaylist.length;
+                audioPlayer.src = musicPlaylist[currentTrackIndex];
+                audioPlayer.play();
+            }
+
+            // 監聽按鈕點擊
+            if(musicToggleButton) musicToggleButton.addEventListener('click', togglePlayPause);
             
-            setInterval(updateSplitFlap, 1000);
-            updateSplitFlap(); // 立即執行一次
+            // 監聽音訊播放結束事件，自動播放下一首
+            if(audioPlayer) audioPlayer.addEventListener('ended', playNextTrack);
+
+            // 監聽音訊的實際播放與暫停事件，以同步UI狀態
+            if(audioPlayer) {
+                audioPlayer.onplaying = function() {
+                    isPlaying = true;
+                    if(musicToggleButton) musicToggleButton.classList.add('playing');
+                };
+                audioPlayer.onpause = function() {
+                    isPlaying = false;
+                    if(musicToggleButton) musicToggleButton.classList.remove('playing');
+                };
+            }
+            // ▲▲▲ 新增：音樂播放器邏輯 ▲▲▲
         });
     </script>
     <!-- ▲▲▲ 修改處 ▲▲▲ -->
