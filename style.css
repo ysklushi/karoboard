@@ -216,7 +216,8 @@ body {
     .page-header {
         padding: 12px 20px;
         text-align: center;
-        justify-content: center;
+        flex-direction: column; /* 讓標題和時間在上方 */
+        gap: 10px;
     }
     .page-header h1 {
         font-size: 20px;
@@ -418,19 +419,49 @@ body {
     }
 }
 
-/* ▼▼▼ 新增處：日期時間顯示的專用樣式 ▼▼▼ */
-#datetime-display {
-  color: #f0f0f0; /* 淺灰色字體，比純白更柔和 */
-  font-size: 24px;
-  font-weight: 600;
-  letter-spacing: 1px;
-  margin: 0;
+/* ▼▼▼ 新增處：標題與時間的排版和樣式 ▼▼▼ */
+.header-left-panel {
+    display: flex;
+    align-items: center; /* 讓標題和時間垂直對齊 */
+    gap: 25px; /* 標題和時間之間的間距 */
+}
+
+/* 構想二：Split-Flap Display 樣式 */
+.split-flap-display {
+    display: flex;
+    background-color: #203141;
+    padding: 8px 15px;
+    border-radius: 6px;
+    color: #e0f2f1; /* 帶點青色的白色，更柔和 */
+    font-family: 'Roboto Mono', monospace; /* 使用等寬字體，確保對齊 */
+    font-size: 18px; /* 比標題的 24px 小 */
+    font-weight: 500;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.4) inset;
+    border: 1px solid rgba(255,255,255,0.1);
+    letter-spacing: 1px;
+}
+.split-flap-display .char {
+    display: inline-block;
+    transition: all 0.2s ease;
+}
+.split-flap-display .char.updated {
+    animation: split-flap-anim 0.4s ease-out;
+}
+@keyframes split-flap-anim {
+    0% { transform: translateY(-0.5em); opacity: 0; }
+    50% { transform: translateY(0.3em); }
+    100% { transform: translateY(0); opacity: 1; }
 }
 
 /* 在手機版上縮小時間字體，維持排版美觀 */
 @media (max-width: 767px) {
-    #datetime-display {
-        font-size: 16px;
+    .header-left-panel {
+        flex-direction: column; /* 在手機上讓標題和時間上下排列 */
+        gap: 8px;
+    }
+    .split-flap-display {
+        font-size: 14px; /* 在手機上再縮小一點 */
+        padding: 6px 12px;
     }
 }
 /* ▲▲▲ 新增處 ▲▲▲ */

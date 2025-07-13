@@ -7,12 +7,23 @@
     
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <link rel="stylesheet" href="style.css">
+    <!-- 為了讓航班看板字體更好看，引入 Google Fonts 的等寬字體 -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@500&display=swap" rel="stylesheet">
 </head>
 <body>
 
     <div class="page-header">
-        <!-- ▼▼▼ 修改處：將 h1 標題替換為用來顯示時間的 div ▼▼▼ -->
-        <div id="datetime-display"></div>
+        <!-- ▼▼▼ 修改處：使用新結構同時容納標題和時間 ▼▼▼ -->
+        <div class="header-left-panel">
+            <h1>過勞儀表板</h1>
+            <div id="datetime-container">
+                <div class="split-flap-display" id="split-flap-display">
+                    <!-- JavaScript 會自動填入內容 -->
+                </div>
+            </div>
+        </div>
         <!-- ▲▲▲ 修改處 ▲▲▲ -->
         <a href="https://karolushi.netlify.app" class="header-link">楊時綱律師</a>
     </div>
@@ -78,35 +89,63 @@
 
     <script src="links.js"></script>
 
-    <!-- ▼▼▼ 新增處：用於顯示日期時間的 JavaScript 程式碼 ▼▼▼ -->
+    <!-- ▼▼▼ 修改處：更新為構想二的 JavaScript 邏輯 ▼▼▼ -->
     <script>
-      function updateCustomTime() {
-        const now = new Date();
-        
-        const year = now.getFullYear();
-        const month = now.getMonth() + 1;
-        const day = now.getDate();
-        const hours = now.getHours().toString().padStart(2, '0');
-        const minutes = now.getMinutes().toString().padStart(2, '0');
-        
-        const weekdays = ["週日", "週一", "週二", "週三", "週四", "週五", "週六"];
-        const weekday = weekdays[now.getDay()];
+        // links.js 會先執行，然後這個 script 會在 DOM 載入後執行
+        // 為了確保所有元素都已存在，將我們的邏輯放在 DOMContentLoaded 事件中
+        document.addEventListener('DOMContentLoaded', function() {
+            const display = document.getElementById('split-flap-display');
+            if (!display) return; // 如果找不到元素，就直接結束，避免錯誤
 
-        // 組合出您想要的格式: 2025年 7月 13日 （週日） 15時30分
-        const formattedDateTime = `${year}年 ${month}月 ${day}日 （${weekday}） ${hours}時${minutes}分`;
-        
-        const displayElement = document.getElementById('datetime-display');
-        if (displayElement) {
-          displayElement.textContent = formattedDateTime;
-        }
-      }
+            let previousString = '';
 
-      // 頁面載入後立即執行一次，避免空白
-      updateCustomTime();
+            function updateSplitFlap() {
+                const now = new Date();
+                const year = now.getFullYear();
+                const month = (now.getMonth() + 1).toString().padStart(2, '0');
+                const day = now.getDate().toString().padStart(2, '0');
+                const hours = now.getHours().toString().padStart(2, '0');
+                const minutes = now.getMinutes().toString().padStart(2, '0');
+                const weekdays = ["週日", "週一", "週二", "週三", "週四", "週五", "週六"];
+                const weekday = weekdays[now.getDay()];
 
-      // 每秒更新一次，確保分鐘能準時跳動
-      setInterval(updateCustomTime, 1000);
+                const newString = `${year}年 ${month}月${day}日 (${weekday}) ${hours}:${minutes}`;
+
+                // 第一次初始化
+                if (previousString === '') {
+                    display.innerHTML = newString.split('').map(char => `<span class="char">${char === ' ' ? ' ' : char}</span>`).join('');
+                    previousString = newString;
+                    return;
+                }
+
+                // 更新變動的字元
+                if (newString !== previousString) {
+                    const chars = display.querySelectorAll('.char');
+                    // 確保字串長度一致，避免錯誤
+                    const len = Math.min(newString.length, chars.length);
+
+                    for (let i = 0; i < len; i++) {
+                        if (newString[i] !== previousString[i]) {
+                            chars[i].innerHTML = newString[i] === ' ' ? ' ' : newString[i];
+                            chars[i].classList.add('updated');
+                            
+                            // 立即執行函式來捕捉當前的 char 元素
+                            ((charElement) => {
+                                setTimeout(() => {
+                                    charElement.classList.remove('updated');
+                                }, 500);
+                            })(chars[i]);
+                        }
+                    }
+                    previousString = newString;
+                }
+            }
+            
+            setInterval(updateSplitFlap, 1000);
+            updateSplitFlap(); // 立即執行一次
+        });
     </script>
-    <!-- ▲▲▲ 新增處 ▲▲▲ -->
+    <!-- ▲▲▲ 修改處 ▲▲▲ -->
+
 </body>
 </html>
