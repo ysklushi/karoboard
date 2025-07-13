@@ -417,3 +417,20 @@ body {
         display: block;
     }
 }
+
+/* ▼▼▼ 新增處：日期時間顯示的專用樣式 ▼▼▼ */
+#datetime-display {
+  color: #f0f0f0; /* 淺灰色字體，比純白更柔和 */
+  font-size: 24px;
+  font-weight: 600;
+  letter-spacing: 1px;
+  margin: 0;
+}
+
+/* 在手機版上縮小時間字體，維持排版美觀 */
+@media (max-width: 767px) {
+    #datetime-display {
+        font-size: 16px;
+    }
+}
+/* ▲▲▲ 新增處 ▲▲▲ */

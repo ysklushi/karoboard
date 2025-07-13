@@ -11,7 +11,9 @@
 <body>
 
     <div class="page-header">
-        <h1>過勞儀表板</h1>
+        <!-- ▼▼▼ 修改處：將 h1 標題替換為用來顯示時間的 div ▼▼▼ -->
+        <div id="datetime-display"></div>
+        <!-- ▲▲▲ 修改處 ▲▲▲ -->
         <a href="https://karolushi.netlify.app" class="header-link">楊時綱律師</a>
     </div>
 
@@ -75,5 +77,36 @@
     <!-- ========================== -->
 
     <script src="links.js"></script>
+
+    <!-- ▼▼▼ 新增處：用於顯示日期時間的 JavaScript 程式碼 ▼▼▼ -->
+    <script>
+      function updateCustomTime() {
+        const now = new Date();
+        
+        const year = now.getFullYear();
+        const month = now.getMonth() + 1;
+        const day = now.getDate();
+        const hours = now.getHours().toString().padStart(2, '0');
+        const minutes = now.getMinutes().toString().padStart(2, '0');
+        
+        const weekdays = ["週日", "週一", "週二", "週三", "週四", "週五", "週六"];
+        const weekday = weekdays[now.getDay()];
+
+        // 組合出您想要的格式: 2025年 7月 13日 （週日） 15時30分
+        const formattedDateTime = `${year}年 ${month}月 ${day}日 （${weekday}） ${hours}時${minutes}分`;
+        
+        const displayElement = document.getElementById('datetime-display');
+        if (displayElement) {
+          displayElement.textContent = formattedDateTime;
+        }
+      }
+
+      // 頁面載入後立即執行一次，避免空白
+      updateCustomTime();
+
+      // 每秒更新一次，確保分鐘能準時跳動
+      setInterval(updateCustomTime, 1000);
+    </script>
+    <!-- ▲▲▲ 新增處 ▲▲▲ -->
 </body>
 </html>
