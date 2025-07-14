@@ -361,7 +361,33 @@ document.getElementById('downloadText').addEventListener('click', function() {
     const personalNotes = document.getElementById('personalNotes').value;
     const tagsInput = document.getElementById('customTags').value;
     const filename = generateFilenameBase() + '.txt';
-    const fileContent = `【${parsedInfo.fileNameBase}】\n\n【判決摘錄】\n${judgmentExcerpt}\n\n【個人筆記】\n${personalNotes}\n\n【關鍵字】\n${tagsInput}\n\n\n====================================================================================================`;
+
+    // --- 修改開始 ---
+    // 取得網址並建構網址區塊
+    const judicialUrl = document.getElementById('judicialUrl').value.trim();
+    const lawbankUrl = document.getElementById('lawbankUrl').value.trim();
+    let urlBlock = '';
+
+    if (judicialUrl && lawbankUrl) {
+        // 兩個網址都存在，中間空一行
+        urlBlock = `${judicialUrl}\n\n${lawbankUrl}`;
+    } else if (judicialUrl) {
+        // 只有司法院網址
+        urlBlock = judicialUrl;
+    } else if (lawbankUrl) {
+        // 只有法源網址
+        urlBlock = lawbankUrl;
+    }
+
+    // 根據是否有網址，決定與前後內容的間隔
+    // 有網址：上下各空兩行 (即 \n\n\n)
+    // 沒網址：維持原本的空一行 (即 \n\n)
+    const urlSection = urlBlock ? `\n\n\n${urlBlock}\n\n\n` : `\n\n`;
+
+    // 產生最終的檔案內容
+    const fileContent = `【${parsedInfo.fileNameBase}】${urlSection}【判決摘錄】\n${judgmentExcerpt}\n\n【個人筆記】\n${personalNotes}\n\n【關鍵字】\n${tagsInput}\n\n\n====================================================================================================`;
+    // --- 修改結束 ---
+
     downloadFile(filename, fileContent, 'text/plain;charset=utf-8');
 });
 
