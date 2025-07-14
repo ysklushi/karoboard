@@ -82,6 +82,10 @@
             <i class="fa-solid fa-newspaper"></i>
             <span class="panel-text">即時法律新聞</span>
         </a>
+        <a href="#" id="open-calculator-btn" class="panel-button" style="background-color: #5bc0de;" title="簡易計算機">
+            <i class="fa-solid fa-calculator"></i>
+            <span class="panel-text">簡易計算機</span>
+        </a>
     </div>
 
     <a href="#" id="back-to-top-btn" class="back-to-top-btn">
@@ -93,13 +97,55 @@
         © 2024 楊時綱. All Rights Reserved.
     </footer>
 
+    <div id="calculator-modal" class="calculator-modal">
+        <div class="calculator-modal-content">
+            <header class="calculator-header">
+                <span id="close-calculator-btn" class="calculator-close-btn">×</span>
+            </header>
+            <div class="calculator-body">
+                <div class="calculator-display">
+                    <div id="calculator-expression" class="calculator-expression"></div>
+                    <div id="calculator-result" class="calculator-result">0</div>
+                </div>
+                <div class="calculator-buttons">
+                    <button class="btn-op-light">C</button>
+                    <button class="btn-op-light">(</button>
+                    <button class="btn-op-light">)</button>
+                    <button class="btn-op-light">DEL</button>
+
+                    <button>7</button>
+                    <button>8</button>
+                    <button>9</button>
+                    <button class="btn-op">÷</button>
+                    
+                    <button>4</button>
+                    <button>5</button>
+                    <button>6</button>
+                    <button class="btn-op">×</button>
+                    
+                    <button>1</button>
+                    <button>2</button>
+                    <button>3</button>
+                    <button class="btn-op">-</button>
+                    
+                    <button>0</button>
+                    <button>.</button>
+                    <button class="btn-op-light">%</button>
+                    <button class="btn-op">+</button>
+                    
+                    <button class="btn-equal span-4">=</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <audio id="background-audio" preload="auto"></audio>
 
     <script src="links.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             
-            // 跑馬燈與按鈕邏輯 (維持不變)
+            // 跑馬燈與按鈕邏輯
             const quoteToggleButton = document.getElementById('quote-toggle-button');
             const marqueeContainer = document.getElementById('marquee-container');
             const marqueeText = document.getElementById('marquee-text-dynamic');
@@ -181,7 +227,7 @@
             });
 
 
-            // 日期與時間的完整邏輯 (維持不變)
+            // 日期與時間的完整邏輯
             const display = document.getElementById('split-flap-display');
             if (display) {
                 let previousString = '';
@@ -224,7 +270,7 @@
                 updateSplitFlap();
             }
 
-            // ▼▼▼ 修改：修正音樂播放器邏輯 ▼▼▼
+            // 音樂播放器邏輯
             const musicToggleButton = document.getElementById('music-toggle-button');
             const audioPlayer = document.getElementById('background-audio');
             if (musicToggleButton && audioPlayer) {
@@ -242,8 +288,7 @@
                 if (musicPlaylist.length > 0) {
                     audioPlayer.src = musicPlaylist[currentTrackIndex];
                 }
-
-                // 【錯誤修正】確保頁面載入時音樂是暫停的
+                
                 audioPlayer.pause();
                 
                 function togglePlayPause() {
@@ -252,7 +297,6 @@
                         return;
                     }
                     if (audioPlayer.paused) {
-                        // 使用 .play() 返回的 Promise 來處理可能的播放錯誤
                         audioPlayer.play().catch(error => {
                             console.error("音樂播放失敗:", error);
                             alert("無法播放音樂，可能是因為瀏覽器限制。請先與頁面互動後再試。");
@@ -271,7 +315,6 @@
                 musicToggleButton.addEventListener('click', togglePlayPause);
                 audioPlayer.addEventListener('ended', playNextTrack);
 
-                // 根據播放狀態更新按鈕樣式
                 audioPlayer.onplaying = function() {
                     musicToggleButton.classList.add('playing');
                 };
@@ -279,8 +322,134 @@
                     musicToggleButton.classList.remove('playing');
                 };
             }
-            // ▲▲▲ 修改完成 ▲▲▲
         });
+    </script>
+
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // --- DOM Element Selection ---
+        const modal = document.getElementById('calculator-modal');
+        const openBtn = document.getElementById('open-calculator-btn');
+        const closeBtn = document.getElementById('close-calculator-btn');
+        const expressionDisplay = document.getElementById('calculator-expression');
+        const resultDisplay = document.getElementById('calculator-result');
+        const buttons = document.querySelector('.calculator-buttons');
+
+        // --- State Variables ---
+        let expression = '';
+        let isResultDisplayed = false;
+
+        // --- Core Functions ---
+        function clearAll() {
+            expression = '';
+            expressionDisplay.textContent = '';
+            resultDisplay.textContent = '0';
+            isResultDisplayed = false;
+        }
+
+        function deleteLast() {
+            if (isResultDisplayed) return; // Cannot delete from a final result
+            expression = expression.slice(0, -1);
+            updateDisplay();
+        }
+
+        function appendCharacter(char) {
+            // If a result is shown, start a new calculation
+            // unless the user presses an operator, in which case, use the result.
+            if (isResultDisplayed) {
+                if ('+-×÷%'.includes(char)) {
+                    // continue with the old result
+                } else {
+                    expression = ''; // start a new number
+                }
+                isResultDisplayed = false;
+            }
+            expression += char;
+            updateDisplay();
+        }
+
+        function safeEval(expr) {
+            if (!expr) return 0;
+            try {
+                let sanitizedExpr = expr
+                    .replace(/×/g, '*')
+                    .replace(/÷/g, '/')
+                    .replace(/%/g, '*0.01');
+
+                if (/[\+\-\*\/]$/.test(sanitizedExpr)) {
+                     sanitizedExpr = sanitizedExpr.slice(0,-1);
+                }
+                
+                if (!sanitizedExpr || sanitizedExpr === '()') return null;
+
+                const result = new Function('return ' + sanitizedExpr)();
+                
+                if (!isFinite(result)) return '錯誤';
+                return Math.round(result * 1e12) / 1e12;
+            } catch (error) {
+                return null;
+            }
+        }
+        
+        function updateDisplay() {
+            expressionDisplay.textContent = expression.replace(/\//g, '÷').replace(/\*/g, '×');
+            const previewResult = safeEval(expression);
+            if (previewResult !== null) {
+                resultDisplay.textContent = previewResult;
+            } else {
+                resultDisplay.textContent = '';
+            }
+        }
+        
+        // ▼▼▼【修改：全新的 calculateFinal 函數】▼▼▼
+        function calculateFinal() {
+            const finalResult = safeEval(expression);
+            if (finalResult !== null && finalResult !== '錯誤') {
+                // 不再顯示計算式和等於符號，直接清空上方
+                expressionDisplay.textContent = ''; 
+                resultDisplay.textContent = finalResult;
+                expression = String(finalResult); // 儲存結果以供下次計算
+                isResultDisplayed = true;
+            } else {
+                expressionDisplay.textContent = ''; // 出錯時也清空
+                resultDisplay.textContent = '語法錯誤';
+                expression = '';
+                isResultDisplayed = false;
+            }
+        }
+        // ▲▲▲【修改結束】▲▲▲
+
+        // --- Event Handlers ---
+        openBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            modal.style.display = 'block';
+        });
+
+        closeBtn.addEventListener('click', () => modal.style.display = 'none');
+        window.addEventListener('click', (e) => {
+            if (e.target == modal) modal.style.display = 'none';
+        });
+
+        buttons.addEventListener('click', function(e) {
+            if (!e.target.matches('button')) return;
+
+            const key = e.target.textContent;
+            
+            if (!isNaN(key) || key === '.') {
+                appendCharacter(key);
+            } else if ('+-×÷()'.includes(key)) {
+                appendCharacter(key);
+            } else if (key === '%') {
+                appendCharacter(key);
+            } else if (key === 'C') {
+                clearAll();
+            } else if (key === 'DEL') {
+                deleteLast();
+            } else if (key === '=') {
+                calculateFinal();
+            }
+        });
+    });
     </script>
 </body>
 </html>

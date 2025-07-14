@@ -317,19 +317,17 @@ body {
     .link-card .title { font-size: 14px; }
 }
 
-/* ▼▼▼ 修改：調整 header 版面邏輯 ▼▼▼ */
 .header-left-panel {
     display: flex;
     align-items: center;
-    gap: 20px; /* 調整主要元件間距 */
-    flex-wrap: wrap; /* 允許換行以適應小螢幕 */
+    gap: 20px;
+    flex-wrap: wrap;
 }
 
-/* 按鈕群組的樣式 */
 .icon-group {
     display: flex;
     align-items: center;
-    gap: 30px; /* 設定兩個圖示按鈕之間的距離 */
+    gap: 30px;
 }
 
 
@@ -353,14 +351,12 @@ body {
         gap: 15px;
     }
     .icon-group {
-        justify-content: center; /* 手機上讓按鈕置中 */
+        justify-content: center;
     }
-    /* ... 其餘手機版樣式 ... */
     .icon-container { height: 80px; }
     .icon-container i { font-size: 40px; }
     .link-card .title { font-size: 12px; min-height: 32px; }
 }
-/* ▲▲▲ 修改完成 ▲▲▲ */
 
 
 .link-card.is-placeholder .icon-container i {
@@ -564,3 +560,155 @@ body {
         padding: 6px 12px;
     }
 }
+
+/* ▼▼▼【修改：計算機樣式】▼▼▼ */
+.calculator-modal {
+    display: none;
+    position: fixed;
+    z-index: 1001;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(3px);
+}
+
+.calculator-modal-content {
+    background-color: #fefefe;
+    margin: 10% auto;
+    border-radius: 12px;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.3);
+    width: 90%;
+    max-width: 440px; /* 【修改】加寬計算機 */
+    overflow: hidden;
+    animation-name: animatetop;
+    animation-duration: 0.4s;
+}
+
+@keyframes animatetop {
+    from {top: -300px; opacity: 0}
+    to {top: 0; opacity: 1}
+}
+
+.calculator-header {
+    display: flex;
+    justify-content: flex-end; /* 【修改】讓 "×" 靠右 */
+    align-items: center;
+    padding: 12px 20px;
+    background-color: #2c3e50;
+    color: white;
+}
+
+.calculator-close-btn {
+    color: #aaa;
+    font-size: 28px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: color 0.2s;
+}
+
+.calculator-close-btn:hover,
+.calculator-close-btn:focus {
+    color: white;
+    text-decoration: none;
+}
+
+.calculator-body {
+    padding: 20px;
+    background-color: #2c3e50;
+}
+
+.calculator-display {
+    background-color: #1d2b3a;
+    color: white;
+    padding: 20px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    text-align: right;
+    word-wrap: break-word;
+    word-break: break-all;
+    min-height: 80px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+.calculator-expression {
+    font-size: 1.2em;
+    color: #a7bed1;
+    min-height: 25px;
+}
+.calculator-result {
+    font-size: 2.5em;
+    font-weight: bold;
+    color: #fff;
+    font-family: 'Roboto Mono', monospace;
+}
+
+.calculator-buttons {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    grid-template-rows: repeat(6, 1fr);
+    gap: 12px;
+}
+
+.calculator-buttons button {
+    height: 70px; /* 【修改】增加按鈕高度 */
+    font-size: 1.6em;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    background-color: #34495e;
+    color: #ecf0f1;
+    transition: all 0.1s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.calculator-buttons button:hover {
+    filter: brightness(1.2);
+}
+
+.calculator-buttons button:active {
+    transform: scale(0.97);
+    filter: brightness(0.9);
+}
+
+.calculator-buttons .btn-op {
+    background-color: #f39c12;
+    color: white;
+}
+.calculator-buttons .btn-op-light {
+    background-color: #5d6d7e;
+    color: white;
+}
+.calculator-buttons .btn-equal {
+    background-color: #27ae60;
+    color: white;
+}
+.calculator-buttons .span-4 {
+    grid-column: span 4;
+}
+
+@media (max-width: 767px) {
+    .calculator-modal-content {
+        margin: 5% auto;
+        max-width: 360px; /* 【修改】手機版也稍微加寬 */
+    }
+    .calculator-buttons button {
+        height: 65px; /* 【修改】手機版按鈕高度 */
+        font-size: 1.5em;
+    }
+    .calculator-display {
+        min-height: 70px;
+    }
+    .calculator-result {
+        font-size: 2.2em;
+    }
+    .calculator-expression {
+        font-size: 1.1em;
+    }
+}
+/* ▲▲▲【修改結束】▲▲▲ */
