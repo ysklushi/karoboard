@@ -100,46 +100,59 @@
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             
-            // ▼▼▼ 修正：跑馬燈動畫邏輯，根據螢幕寬度執行不同動畫 ▼▼▼
+            // ▼▼▼ 修正：新增自動翻譯功能 ▼▼▼
             async function fetchQuoteAndAnimate() {
                 const marqueeContainer = document.getElementById('marquee-container');
                 const marqueeText = document.getElementById('marquee-text-dynamic');
                 
-                // --- 1. 抓取名言內容 (維持 ZenQuotes API) ---
-                const targetUrl = 'https://zenquotes.io/api/random';
-                const proxyUrl = `https://api.allorigins.win/get?url=${encodeURIComponent(targetUrl)}`;
+                // --- 1. 抓取英文名言 ---
+                const quoteProxyUrl = `https://api.allorigins.win/get?url=${encodeURIComponent('https://zenquotes.io/api/random')}`;
 
                 try {
-                    const response = await fetch(proxyUrl, { cache: 'no-cache' });
-                    if (!response.ok) throw new Error(`網路請求失敗: ${response.status}`);
-                    const data = await response.json();
-                    const quoteData = JSON.parse(data.contents);
+                    const quoteResponse = await fetch(quoteProxyUrl, { cache: 'no-cache' });
+                    if (!quoteResponse.ok) throw new Error(`名言API請求失敗: ${quoteResponse.status}`);
                     
-                    if (quoteData && quoteData.length > 0) {
-                        const quote = quoteData[0].q;
-                        const author = quoteData[0].a;
-                        marqueeText.textContent = `"${quote}" — ${author}`;
-                    } else {
+                    const quoteJson = await quoteResponse.json();
+                    const quoteData = JSON.parse(quoteJson.contents);
+                    
+                    if (!quoteData || quoteData.length === 0) {
                         throw new Error('無法從 API 解析名言內容');
                     }
+                    
+                    const englishQuote = quoteData[0].q;
+                    const author = quoteData[0].a;
+
+                    // --- 2. 抓到英文名言後，嘗試進行翻譯 ---
+                    try {
+                        const translateUrl = `https://api.mymemory.translated.net/get?q=${encodeURIComponent(englishQuote)}&langpair=en|zh-TW`;
+                        const translateResponse = await fetch(translateUrl);
+                        if (!translateResponse.ok) throw new Error('翻譯API請求失敗');
+                        
+                        const translateData = await translateResponse.json();
+                        const translatedText = translateData.responseData.translatedText;
+
+                        // 如果翻譯成功，組合中英文
+                        marqueeText.textContent = `"${englishQuote}" (${translatedText}) — ${author}`;
+
+                    } catch (translationError) {
+                        console.error('翻譯失敗，將只顯示英文原文:', translationError);
+                        // 翻譯失敗，則只顯示英文原文
+                        marqueeText.textContent = `"${englishQuote}" — ${author}`;
+                    }
+
                 } catch (error) {
-                    console.error('抓取 ZenQuotes 名言時發生錯誤:', error);
+                    console.error('抓取名言時發生主要錯誤:', error);
+                    // 如果連英文都抓不到，顯示預設內容
                     marqueeText.textContent = '讀取每日名言失敗，將顯示預設內容。 "The journey of a thousand miles begins with a single step." — Lao Tzu';
                 }
 
-                // --- 2. 簡化後的動畫控制邏輯 ---
-                // 重設動畫
+                // --- 3. 動畫控制邏輯 (維持不變) ---
                 marqueeText.classList.remove('is-animating');
-                void marqueeText.offsetWidth; // 強制瀏覽器重新渲染
+                void marqueeText.offsetWidth;
 
-                // 判斷螢幕寬度
                 const isMobile = window.innerWidth <= 767;
 
-                if (isMobile) {
-                    // 【手機版】直接套用 CSS 中定義好的滾動動畫
-                    // 不需動態產生 keyframes
-                } else {
-                    // 【電腦版】動態計算終點並產生 keyframes
+                if (!isMobile) {
                     const containerWidth = marqueeContainer.offsetWidth;
                     const textWidth = marqueeText.offsetWidth;
                     const finalPosition = (containerWidth - textWidth) / 2;
@@ -150,7 +163,6 @@
                         dynamicStyle.id = 'marquee-dynamic-styles';
                         document.head.appendChild(dynamicStyle);
                     }
-                    // 動態寫入動畫的終點
                     dynamicStyle.innerHTML = `
                         @keyframes slide-in-and-stop {
                             from { transform: translateX(100vw); }
@@ -158,8 +170,7 @@
                         }
                     `;
                 }
-
-                // 啟動動畫
+                
                 marqueeText.classList.add('is-animating');
             }
             // ▲▲▲ 修改完成 ▲▲▲
