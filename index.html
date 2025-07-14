@@ -22,7 +22,6 @@
                     <!-- JavaScript 會自動填入內容 -->
                 </div>
             </div>
-            <!-- ▼▼▼ 修改：將兩個圖示按鈕包在一個群組裡，方便手機版排版 ▼▼▼ -->
             <div class="icon-group">
                 <div id="music-toggle-button" class="music-icon-container" title="播放/暫停背景音樂">
                     <i class="fa-solid fa-music"></i>
@@ -31,18 +30,14 @@
                     <i class="fa-solid fa-quote-left"></i>
                 </div>
             </div>
-            <!-- ▲▲▲ 修改完成 ▲▲▲ -->
         </div>
         <div class="header-right-panel">
             <a href="https://karolushi.netlify.app" class="header-link">楊時綱律師</a>
         </div>
     </div>
 
-    <!-- 跑馬燈預設為隱藏，由 JS 控制顯示 -->
     <div class="marquee-container" id="marquee-container">
-        <p class="marquee-text" id="marquee-text-dynamic">
-            <!-- 初始為空 -->
-        </p>
+        <p class="marquee-text" id="marquee-text-dynamic"></p>
     </div>
 
     <a href="https://karolushi.netlify.app" class="mobile-home-link">前往 楊時綱律師 個人網站</a>
@@ -74,7 +69,6 @@
         <div id="link-container"></div>
     </main>
 
-    <!-- ==== 修改：懸浮功能面板 ==== -->
     <div class="floating-panel">
         <a href="tool.html" target="_blank" class="panel-button" title="文章整理小幫手">
             <i class="fa-solid fa-wand-magic-sparkles"></i>
@@ -89,18 +83,15 @@
             <span class="panel-text">即時法律新聞</span>
         </a>
     </div>
-    <!-- ========================= -->
 
     <a href="#" id="back-to-top-btn" class="back-to-top-btn">
         <i class="fa-solid fa-arrow-up"></i>
         <span>回到最上</span>
     </a>
 
-    <!-- ==== 新增：頁尾版權聲明 ==== -->
     <footer class="page-footer">
         © 2024 楊時綱. All Rights Reserved.
     </footer>
-    <!-- ========================== -->
 
     <audio id="background-audio" preload="auto"></audio>
 
@@ -108,19 +99,18 @@
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             
-            // ▼▼▼ 修改：重構跑馬燈與按鈕邏輯 ▼▼▼
+            // 跑馬燈與按鈕邏輯 (維持不變)
             const quoteToggleButton = document.getElementById('quote-toggle-button');
             const marqueeContainer = document.getElementById('marquee-container');
             const marqueeText = document.getElementById('marquee-text-dynamic');
             
-            let isQuoteVisible = false; // 追蹤跑馬燈的顯示狀態
-            let isFetching = false; // 防止重複點擊造成多次請求
+            let isQuoteVisible = false;
+            let isFetching = false;
 
-            // 抓取並設定名言內容的函式
             async function fetchAndSetQuote() {
                 if (isFetching) return;
                 isFetching = true;
-                marqueeText.textContent = '每日名言載入中...'; // 顯示載入提示
+                marqueeText.textContent = '每日名言載入中...';
                 
                 try {
                     const quoteProxyUrl = `https://api.allorigins.win/get?url=${encodeURIComponent('https://zenquotes.io/api/random')}`;
@@ -133,7 +123,6 @@
                     const englishQuote = quoteData[0].q;
                     const author = quoteData[0].a;
 
-                    // 嘗試翻譯
                     try {
                         const translateUrl = `https://api.mymemory.translated.net/get?q=${encodeURIComponent(englishQuote)}&langpair=en|zh-TW`;
                         const translateResponse = await fetch(translateUrl);
@@ -151,7 +140,6 @@
                 }
             }
 
-            // 啟動跑馬燈動畫的函式
             function startMarqueeAnimation() {
                 marqueeText.classList.remove('is-animating');
                 void marqueeText.offsetWidth;
@@ -179,27 +167,21 @@
                 marqueeText.classList.add('is-animating');
             }
             
-            // 名言按鈕的點擊事件
             quoteToggleButton.addEventListener('click', async () => {
                 isQuoteVisible = !isQuoteVisible;
                 quoteToggleButton.classList.toggle('active', isQuoteVisible);
                 marqueeContainer.classList.toggle('is-visible', isQuoteVisible);
 
                 if (isQuoteVisible) {
-                    // 如果是顯示跑馬燈
-                    await fetchAndSetQuote(); // 等待名言抓取完成
-                    
-                    // 延遲 0.5 秒後才啟動動畫
+                    await fetchAndSetQuote();
                     setTimeout(startMarqueeAnimation, 500);
                 } else {
-                    // 如果是隱藏，重設文字和動畫
                     marqueeText.classList.remove('is-animating');
                 }
             });
-            // ▲▲▲ 修改完成 ▲▲▲
 
 
-            // ▼▼▼ 日期與時間的完整邏輯 (維持不變) ▼▼▼
+            // 日期與時間的完整邏輯 (維持不變)
             const display = document.getElementById('split-flap-display');
             if (display) {
                 let previousString = '';
@@ -241,9 +223,8 @@
                 setInterval(updateSplitFlap, 1000);
                 updateSplitFlap();
             }
-            // ▲▲▲ 日期邏輯結束 ▲▲▲
 
-            // ▼▼▼ 音樂播放器的完整邏輯 (維持不變) ▼▼▼
+            // ▼▼▼ 修改：修正音樂播放器邏輯 ▼▼▼
             const musicToggleButton = document.getElementById('music-toggle-button');
             const audioPlayer = document.getElementById('background-audio');
             if (musicToggleButton && audioPlayer) {
@@ -257,21 +238,24 @@
                 ];
 
                 let currentTrackIndex = 0;
-                let isPlaying = false;
 
                 if (musicPlaylist.length > 0) {
                     audioPlayer.src = musicPlaylist[currentTrackIndex];
                 }
+
+                // 【錯誤修正】確保頁面載入時音樂是暫停的
+                audioPlayer.pause();
                 
                 function togglePlayPause() {
                     if (musicPlaylist.length === 0) {
                         alert('音樂播放清單是空的！');
                         return;
                     }
-                    const audioIsPaused = audioPlayer.paused;
-                    if (audioIsPaused) {
+                    if (audioPlayer.paused) {
+                        // 使用 .play() 返回的 Promise 來處理可能的播放錯誤
                         audioPlayer.play().catch(error => {
                             console.error("音樂播放失敗:", error);
+                            alert("無法播放音樂，可能是因為瀏覽器限制。請先與頁面互動後再試。");
                         });
                     } else {
                         audioPlayer.pause();
@@ -287,16 +271,15 @@
                 musicToggleButton.addEventListener('click', togglePlayPause);
                 audioPlayer.addEventListener('ended', playNextTrack);
 
+                // 根據播放狀態更新按鈕樣式
                 audioPlayer.onplaying = function() {
-                    isPlaying = true;
                     musicToggleButton.classList.add('playing');
                 };
                 audioPlayer.onpause = function() {
-                    isPlaying = false;
                     musicToggleButton.classList.remove('playing');
                 };
             }
-            // ▲▲▲ 音樂邏輯結束 ▲▲▲
+            // ▲▲▲ 修改完成 ▲▲▲
         });
     </script>
 </body>

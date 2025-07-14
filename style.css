@@ -43,7 +43,7 @@ body {
     gap: 20px;
 }
 
-/* ▼▼▼ 修改：將音樂和名言按鈕樣式合併 ▼▼▼ */
+/* 將音樂和名言按鈕樣式合併 */
 .music-icon-container,
 .quote-icon-container {
     width: 38px;
@@ -84,10 +84,8 @@ body {
 .quote-icon-container.active i {
     color: #2c3e50;
 }
-/* ▲▲▲ 修改完成 ▲▲▲ */
 
-
-/* ▼▼▼ 修改：跑馬燈樣式，加入展開/收合動畫 ▼▼▼ */
+/* 跑馬燈樣式，加入展開/收合動畫 */
 .marquee-container {
     background-color: #34495e;
     color: #ecf0f1;
@@ -95,7 +93,6 @@ body {
     white-space: nowrap;
     box-shadow: inset 0 2px 5px rgba(0,0,0,0.2);
     
-    /* 動畫關鍵屬性 */
     max-height: 0;
     padding-top: 0;
     padding-bottom: 0;
@@ -104,7 +101,7 @@ body {
 
 /* 展開時的狀態 */
 .marquee-container.is-visible {
-    max-height: 60px; /* 一個足夠大的值 */
+    max-height: 60px;
     padding-top: 10px;
     padding-bottom: 10px;
 }
@@ -115,7 +112,6 @@ body {
     font-size: 15px;
     transform: translateX(100vw);
     will-change: transform;
-    /* 預設是透明的，動畫開始時才顯示 */
     opacity: 0;
     transition: opacity 0.2s linear;
 }
@@ -124,9 +120,8 @@ body {
     animation-play-state: paused;
 }
 
-/* 觸發動畫的 class */
 .marquee-text.is-animating {
-    opacity: 1; /* 顯示文字 */
+    opacity: 1;
     animation: slide-in-and-stop 20s linear 1 forwards;
 }
 
@@ -148,7 +143,6 @@ body {
         transform: translateX(-100%);
     }
 }
-/* ▲▲▲ 修改完成 ▲▲▲ */
 
 
 .mobile-home-link {
@@ -323,39 +317,51 @@ body {
     .link-card .title { font-size: 14px; }
 }
 
+/* ▼▼▼ 修改：調整 header 版面邏輯 ▼▼▼ */
+.header-left-panel {
+    display: flex;
+    align-items: center;
+    gap: 20px; /* 調整主要元件間距 */
+    flex-wrap: wrap; /* 允許換行以適應小螢幕 */
+}
+
+/* 按鈕群組的樣式 */
+.icon-group {
+    display: flex;
+    align-items: center;
+    gap: 30px; /* 設定兩個圖示按鈕之間的距離 */
+}
+
+
 @media (max-width: 767px) {
     .page-header {
         padding: 12px 20px;
-        text-align: center;
         flex-direction: column;
         gap: 10px;
     }
     .page-header h1 {
         font-size: 20px;
     }
-    .header-link {
-        display: none;
-    }
-    .header-right-panel {
+    .header-link, .header-right-panel {
         display: none;
     }
     .mobile-home-link {
         display: block;
     }
-    /* ▼▼▼ 修改：讓手機版兩個按鈕並排 ▼▼▼ */
-    #music-toggle-button, #quote-toggle-button {
-        align-self: center;
-        margin-top: 10px;
+    .header-left-panel {
+        flex-direction: column;
+        gap: 15px;
     }
-    .header-left-panel .icon-group {
-        display: flex;
-        gap: 20px;
+    .icon-group {
+        justify-content: center; /* 手機上讓按鈕置中 */
     }
-    /* ▲▲▲ 修改完成 ▲▲▲ */
+    /* ... 其餘手機版樣式 ... */
     .icon-container { height: 80px; }
     .icon-container i { font-size: 40px; }
     .link-card .title { font-size: 12px; min-height: 32px; }
 }
+/* ▲▲▲ 修改完成 ▲▲▲ */
+
 
 .link-card.is-placeholder .icon-container i {
     color: #b0bec5;
@@ -403,7 +409,6 @@ body {
 
 /* ============ 功能區樣式 ============ */
 
-/* 1. 頁尾版權聲明樣式 */
 .page-footer {
     text-align: center;
     padding: 20px;
@@ -414,7 +419,6 @@ body {
     border-top: 1px solid #dee2e6;
 }
 
-/* 2. 右側懸浮功能面板樣式 (電腦版) */
 .floating-panel {
     position: fixed;
     top: 50%;
@@ -473,7 +477,6 @@ body {
     font-weight: 600;
 }
 
-/* 3. 懸浮面板在手機上的專用樣式 */
 @media (max-width: 767px) {
     .floating-panel {
         top: auto;
@@ -527,12 +530,6 @@ body {
     }
 }
 
-.header-left-panel {
-    display: flex;
-    align-items: center;
-    gap: 30px;
-}
-
 .split-flap-display {
     display: flex;
     background: linear-gradient(to bottom, #283440, #202a35);
@@ -562,10 +559,6 @@ body {
 }
 
 @media (max-width: 767px) {
-    .header-left-panel {
-        flex-direction: column;
-        gap: 8px;
-    }
     .split-flap-display {
         font-size: 14px;
         padding: 6px 12px;
