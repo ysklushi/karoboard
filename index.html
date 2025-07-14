@@ -22,18 +22,26 @@
                     <!-- JavaScript 會自動填入內容 -->
                 </div>
             </div>
-            <div id="music-toggle-button" class="music-icon-container" title="播放/暫停背景音樂">
-                <i class="fa-solid fa-music"></i>
+            <!-- ▼▼▼ 修改：將兩個圖示按鈕包在一個群組裡，方便手機版排版 ▼▼▼ -->
+            <div class="icon-group">
+                <div id="music-toggle-button" class="music-icon-container" title="播放/暫停背景音樂">
+                    <i class="fa-solid fa-music"></i>
+                </div>
+                <div id="quote-toggle-button" class="quote-icon-container" title="顯示/隱藏每日名言">
+                    <i class="fa-solid fa-quote-left"></i>
+                </div>
             </div>
+            <!-- ▲▲▲ 修改完成 ▲▲▲ -->
         </div>
         <div class="header-right-panel">
             <a href="https://karolushi.netlify.app" class="header-link">楊時綱律師</a>
         </div>
     </div>
 
+    <!-- 跑馬燈預設為隱藏，由 JS 控制顯示 -->
     <div class="marquee-container" id="marquee-container">
         <p class="marquee-text" id="marquee-text-dynamic">
-            每日名言載入中...
+            <!-- 初始為空 -->
         </p>
     </div>
 
@@ -100,53 +108,51 @@
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             
-            // ▼▼▼ 修正：新增自動翻譯功能 ▼▼▼
-            async function fetchQuoteAndAnimate() {
-                const marqueeContainer = document.getElementById('marquee-container');
-                const marqueeText = document.getElementById('marquee-text-dynamic');
-                
-                // --- 1. 抓取英文名言 ---
-                const quoteProxyUrl = `https://api.allorigins.win/get?url=${encodeURIComponent('https://zenquotes.io/api/random')}`;
+            // ▼▼▼ 修改：重構跑馬燈與按鈕邏輯 ▼▼▼
+            const quoteToggleButton = document.getElementById('quote-toggle-button');
+            const marqueeContainer = document.getElementById('marquee-container');
+            const marqueeText = document.getElementById('marquee-text-dynamic');
+            
+            let isQuoteVisible = false; // 追蹤跑馬燈的顯示狀態
+            let isFetching = false; // 防止重複點擊造成多次請求
 
+            // 抓取並設定名言內容的函式
+            async function fetchAndSetQuote() {
+                if (isFetching) return;
+                isFetching = true;
+                marqueeText.textContent = '每日名言載入中...'; // 顯示載入提示
+                
                 try {
+                    const quoteProxyUrl = `https://api.allorigins.win/get?url=${encodeURIComponent('https://zenquotes.io/api/random')}`;
                     const quoteResponse = await fetch(quoteProxyUrl, { cache: 'no-cache' });
-                    if (!quoteResponse.ok) throw new Error(`名言API請求失敗: ${quoteResponse.status}`);
+                    if (!quoteResponse.ok) throw new Error('名言API請求失敗');
                     
-                    const quoteJson = await quoteResponse.json();
-                    const quoteData = JSON.parse(quoteJson.contents);
-                    
-                    if (!quoteData || quoteData.length === 0) {
-                        throw new Error('無法從 API 解析名言內容');
-                    }
-                    
+                    const quoteData = JSON.parse((await quoteResponse.json()).contents);
+                    if (!quoteData || quoteData.length === 0) throw new Error('無法解析名言內容');
+
                     const englishQuote = quoteData[0].q;
                     const author = quoteData[0].a;
 
-                    // --- 2. 抓到英文名言後，嘗試進行翻譯 ---
+                    // 嘗試翻譯
                     try {
                         const translateUrl = `https://api.mymemory.translated.net/get?q=${encodeURIComponent(englishQuote)}&langpair=en|zh-TW`;
                         const translateResponse = await fetch(translateUrl);
-                        if (!translateResponse.ok) throw new Error('翻譯API請求失敗');
-                        
                         const translateData = await translateResponse.json();
                         const translatedText = translateData.responseData.translatedText;
-
-                        // 如果翻譯成功，組合中英文
                         marqueeText.textContent = `"${englishQuote}" (${translatedText}) — ${author}`;
-
                     } catch (translationError) {
-                        console.error('翻譯失敗，將只顯示英文原文:', translationError);
-                        // 翻譯失敗，則只顯示英文原文
                         marqueeText.textContent = `"${englishQuote}" — ${author}`;
                     }
-
                 } catch (error) {
-                    console.error('抓取名言時發生主要錯誤:', error);
-                    // 如果連英文都抓不到，顯示預設內容
+                    console.error('抓取名言時發生錯誤:', error);
                     marqueeText.textContent = '讀取每日名言失敗，將顯示預設內容。 "The journey of a thousand miles begins with a single step." — Lao Tzu';
+                } finally {
+                    isFetching = false;
                 }
+            }
 
-                // --- 3. 動畫控制邏輯 (維持不變) ---
+            // 啟動跑馬燈動畫的函式
+            function startMarqueeAnimation() {
                 marqueeText.classList.remove('is-animating');
                 void marqueeText.offsetWidth;
 
@@ -156,7 +162,7 @@
                     const containerWidth = marqueeContainer.offsetWidth;
                     const textWidth = marqueeText.offsetWidth;
                     const finalPosition = (containerWidth - textWidth) / 2;
-
+                    
                     let dynamicStyle = document.getElementById('marquee-dynamic-styles');
                     if (!dynamicStyle) {
                         dynamicStyle = document.createElement('style');
@@ -170,16 +176,27 @@
                         }
                     `;
                 }
-                
                 marqueeText.classList.add('is-animating');
             }
+            
+            // 名言按鈕的點擊事件
+            quoteToggleButton.addEventListener('click', async () => {
+                isQuoteVisible = !isQuoteVisible;
+                quoteToggleButton.classList.toggle('active', isQuoteVisible);
+                marqueeContainer.classList.toggle('is-visible', isQuoteVisible);
+
+                if (isQuoteVisible) {
+                    // 如果是顯示跑馬燈
+                    await fetchAndSetQuote(); // 等待名言抓取完成
+                    
+                    // 延遲 0.5 秒後才啟動動畫
+                    setTimeout(startMarqueeAnimation, 500);
+                } else {
+                    // 如果是隱藏，重設文字和動畫
+                    marqueeText.classList.remove('is-animating');
+                }
+            });
             // ▲▲▲ 修改完成 ▲▲▲
-
-
-            // 頁面載入時，立刻執行一次
-            fetchQuoteAndAnimate();
-            // 設定每小時 (3600000 毫秒) 執行一次
-            setInterval(fetchQuoteAndAnimate, 3600000);
 
 
             // ▼▼▼ 日期與時間的完整邏輯 (維持不變) ▼▼▼

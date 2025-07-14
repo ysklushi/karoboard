@@ -43,7 +43,9 @@ body {
     gap: 20px;
 }
 
-.music-icon-container {
+/* ▼▼▼ 修改：將音樂和名言按鈕樣式合併 ▼▼▼ */
+.music-icon-container,
+.quote-icon-container {
     width: 38px;
     height: 38px;
     border-radius: 50%;
@@ -52,77 +54,92 @@ body {
     align-items: center;
     cursor: pointer;
     transition: all 0.3s ease;
-    background-color: #6c757d;
+    background-color: #6c757d; /* 預設灰色 */
     border: 2px solid rgba(255, 255, 255, 0.2);
     box-shadow: inset 0 1px 2px rgba(0,0,0,0.2), 0 1px 1px rgba(255,255,255,0.1);
 }
 
-.music-icon-container:hover {
+.music-icon-container:hover,
+.quote-icon-container:hover {
     transform: scale(1.1);
     opacity: 0.9;
 }
 
-.music-icon-container i {
+.music-icon-container i,
+.quote-icon-container i {
     color: #fff;
     font-size: 16px;
     transition: color 0.3s ease;
 }
 
-.music-icon-container.playing {
+/* 啟用狀態 (亮黃色) */
+.music-icon-container.playing,
+.quote-icon-container.active {
     background-color: #f1c40f;
     border-color: rgba(255, 255, 255, 0.5);
     box-shadow: 0 0 12px rgba(241, 196, 15, 0.8), 0 0 8px rgba(241, 196, 15, 0.6), inset 0 1px 1px rgba(255,255,255,0.4);
 }
 
-.music-icon-container.playing i {
+.music-icon-container.playing i,
+.quote-icon-container.active i {
     color: #2c3e50;
 }
+/* ▲▲▲ 修改完成 ▲▲▲ */
 
 
-/* ▼▼▼ 修改：跑馬燈樣式更新，以支援電腦/手機不同動畫 ▼▼▼ */
+/* ▼▼▼ 修改：跑馬燈樣式，加入展開/收合動畫 ▼▼▼ */
 .marquee-container {
-    background-color: #34495e; /* 比 header 稍淺的顏色 */
+    background-color: #34495e;
     color: #ecf0f1;
-    padding: 10px 0;
     overflow: hidden;
     white-space: nowrap;
     box-shadow: inset 0 2px 5px rgba(0,0,0,0.2);
+    
+    /* 動畫關鍵屬性 */
+    max-height: 0;
+    padding-top: 0;
+    padding-bottom: 0;
+    transition: max-height 0.4s ease-in-out, padding 0.4s ease-in-out;
+}
+
+/* 展開時的狀態 */
+.marquee-container.is-visible {
+    max-height: 60px; /* 一個足夠大的值 */
+    padding-top: 10px;
+    padding-bottom: 10px;
 }
 
 .marquee-text {
     display: inline-block;
     margin: 0;
     font-size: 15px;
-    /* 統一預設從螢幕右側外開始 */
     transform: translateX(100vw);
-    will-change: transform; /* 優化動畫效能 */
+    will-change: transform;
+    /* 預設是透明的，動畫開始時才顯示 */
+    opacity: 0;
+    transition: opacity 0.2s linear;
 }
 
-/* 當滑鼠懸浮在跑馬燈上時，暫停當前動畫 */
 .marquee-container:hover .marquee-text {
     animation-play-state: paused;
 }
 
 /* 觸發動畫的 class */
 .marquee-text.is-animating {
-    /* 電腦版預設動畫：滑入並停止 (動畫內容由 JS 動態生成) */
+    opacity: 1; /* 顯示文字 */
     animation: slide-in-and-stop 20s linear 1 forwards;
 }
 
-/* 【手機版專用】 當螢幕寬度小於 768px 時，覆寫動畫效果 */
 @media (max-width: 767px) {
     .marquee-text.is-animating {
-        /* 手機版動畫：改為傳統的無限滾動 */
         animation: marquee-scroll-mobile 30s linear infinite;
     }
 }
 
-/* 動畫 1：電腦版 - 滑入中央停止 (此 keyframes 的內容會由 JS 動態生成) */
 @keyframes slide-in-and-stop {
     /* from 和 to 的值將由 JavaScript 動態填入 */
 }
 
-/* 動畫 2：手機版 - 傳統滾動 */
 @keyframes marquee-scroll-mobile {
     from {
         transform: translateX(100vw);
@@ -325,10 +342,16 @@ body {
     .mobile-home-link {
         display: block;
     }
-    #music-toggle-button {
+    /* ▼▼▼ 修改：讓手機版兩個按鈕並排 ▼▼▼ */
+    #music-toggle-button, #quote-toggle-button {
         align-self: center;
         margin-top: 10px;
     }
+    .header-left-panel .icon-group {
+        display: flex;
+        gap: 20px;
+    }
+    /* ▲▲▲ 修改完成 ▲▲▲ */
     .icon-container { height: 80px; }
     .icon-container i { font-size: 40px; }
     .link-card .title { font-size: 12px; min-height: 32px; }
