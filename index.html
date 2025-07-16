@@ -7,15 +7,10 @@
     
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <link rel="stylesheet" href="style.css">
+    <!-- 為了讓航班看板字體更好看，引入 Google Fonts 的等寬字體 -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@500&display=swap" rel="stylesheet">
-    
-    <!-- HLS 播放器 (用於廣播) -->
-    <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
-    <!-- Podcast 播放器 (第三方元件) -->
-    <script type="module" src="https://cdn.jsdelivr.net/npm/podcast-player@2.0.0/dist/podcast-player.js"></script>
-
 </head>
 <body>
 
@@ -23,7 +18,9 @@
         <div class="header-left-panel">
             <h1>過勞儀表板</h1>
             <div id="datetime-container">
-                <div class="split-flap-display" id="split-flap-display"></div>
+                <div class="split-flap-display" id="split-flap-display">
+                    <!-- JavaScript 會自動填入內容 -->
+                </div>
             </div>
             <div class="icon-group">
                 <div id="music-toggle-button" class="music-icon-container" title="播放/暫停背景音樂">
@@ -56,6 +53,7 @@
                 </div>
                 <button type="submit" style="display: none;">搜尋</button>
             </form>
+
             <form id="lawbank-search-form" class="search-form">
                 <div class="search-box">
                     <i class="fa-solid fa-book-atlas search-icon"></i>
@@ -63,6 +61,7 @@
                 </div>
                 <button type="submit" style="display: none;">搜尋</button>
             </form>
+
         </div>
     </header>
 
@@ -71,59 +70,71 @@
     </main>
 
     <div class="floating-panel">
-        <a href="tool.html" target="_blank" class="panel-button" title="文章整理小幫手"><i class="fa-solid fa-wand-magic-sparkles"></i><span class="panel-text">文章整理小幫手</span></a>
-        <a href="judgment_tool.html" target="_blank" class="panel-button panel-button-alt" title="判決摘錄小工具"><i class="fa-solid fa-file-invoice"></i><span class="panel-text">判決摘錄小工具</span></a>
-        <a href="https://touchstorm.netlify.app/" target="_blank" class="panel-button panel-button-warning" title="即時法律新聞"><i class="fa-solid fa-newspaper"></i><span class="panel-text">即時法律新聞</span></a>
-        <a href="#" id="open-calculator-btn" class="panel-button" style="background-color: #5bc0de;" title="簡易計算機"><i class="fa-solid fa-calculator"></i><span class="panel-text">簡易計算機</span></a>
-        <a href="#" id="open-player-btn" class="panel-button" style="background-color: #6c5ce7;" title="線上音訊播放器"><i class="fa-solid fa-headphones-simple"></i><span class="panel-text">線上音訊播放器</span></a>
+        <a href="tool.html" target="_blank" class="panel-button" title="文章整理小幫手">
+            <i class="fa-solid fa-wand-magic-sparkles"></i>
+            <span class="panel-text">文章整理小幫手</span>
+        </a>
+        <a href="judgment_tool.html" target="_blank" class="panel-button panel-button-alt" title="判決摘錄小工具">
+            <i class="fa-solid fa-file-invoice"></i>
+            <span class="panel-text">判決摘錄小工具</span>
+        </a>
+        <a href="https://touchstorm.netlify.app/" target="_blank" class="panel-button panel-button-warning" title="即時法律新聞">
+            <i class="fa-solid fa-newspaper"></i>
+            <span class="panel-text">即時法律新聞</span>
+        </a>
+        <a href="#" id="open-calculator-btn" class="panel-button" style="background-color: #5bc0de;" title="簡易計算機">
+            <i class="fa-solid fa-calculator"></i>
+            <span class="panel-text">簡易計算機</span>
+        </a>
     </div>
 
-    <a href="#" id="back-to-top-btn" class="back-to-top-btn"><i class="fa-solid fa-arrow-up"></i><span>回到最上</span></a>
+    <a href="#" id="back-to-top-btn" class="back-to-top-btn">
+        <i class="fa-solid fa-arrow-up"></i>
+        <span>回到最上</span>
+    </a>
 
-    <footer class="page-footer">© 2024 楊時綱. All Rights Reserved.</footer>
+    <footer class="page-footer">
+        © 2024 楊時綱. All Rights Reserved.
+    </footer>
 
     <div id="calculator-modal" class="calculator-modal">
         <div class="calculator-modal-content">
-            <header class="calculator-header"><span id="close-calculator-btn" class="calculator-close-btn">×</span></header>
-            <div class="calculator-body">
-                <div class="calculator-display"><div id="calculator-expression" class="calculator-expression"></div><div id="calculator-result" class="calculator-result">0</div></div>
-                <div class="calculator-buttons"><button class="btn-op-light">C</button><button class="btn-op-light">(</button><button class="btn-op-light">)</button><button class="btn-op-light">DEL</button><button>7</button><button>8</button><button>9</button><button class="btn-op">÷</button><button>4</button><button>5</button><button>6</button><button class="btn-op">×</button><button>1</button><button>2</button><button>3</button><button class="btn-op">-</button><button>0</button><button>.</button><button class="btn-op-light">%</button><button class="btn-op">+</button><button class="btn-equal span-4">=</button></div>
-            </div>
-        </div>
-    </div>
-    
-    <div id="player-modal" class="player-modal">
-        <div class="player-modal-content">
-            <header class="player-header">
-                <h3><i class="fa-solid fa-tower-broadcast"></i> 線上音訊</h3>
-                <span id="close-player-btn" class="player-close-btn">×</span>
+            <header class="calculator-header">
+                <span id="close-calculator-btn" class="calculator-close-btn">×</span>
             </header>
-            <div class="player-body">
-                <div class="player-toggle">
-                    <input type="checkbox" id="player-mode-toggle" class="player-mode-checkbox">
-                    <label for="player-mode-toggle" class="toggle-label toggle-radio">廣播電台</label>
-                    <label for="player-mode-toggle" class="toggle-label toggle-podcast">Podcast</label>
-                    <div class="toggle-slider"></div>
+            <div class="calculator-body">
+                <div class="calculator-display">
+                    <div id="calculator-expression" class="calculator-expression"></div>
+                    <div id="calculator-result" class="calculator-result">0</div>
                 </div>
+                <div class="calculator-buttons">
+                    <button class="btn-op-light">C</button>
+                    <button class="btn-op-light">(</button>
+                    <button class="btn-op-light">)</button>
+                    <button class="btn-op-light">DEL</button>
 
-                <!-- ▼▼▼【已修改】播放器容器結構 ▼▼▼ -->
-                <div id="radio-player-container" class="player-container">
-                    <div class="select-wrapper">
-                        <select id="radio-select" class="player-select"></select>
-                    </div>
-                    <div class="player-main-area">
-                        <audio id="radio-audio-element" controls preload="metadata"></audio>
-                    </div>
+                    <button>7</button>
+                    <button>8</button>
+                    <button>9</button>
+                    <button class="btn-op">÷</button>
+                    
+                    <button>4</button>
+                    <button>5</button>
+                    <button>6</button>
+                    <button class="btn-op">×</button>
+                    
+                    <button>1</button>
+                    <button>2</button>
+                    <button>3</button>
+                    <button class="btn-op">-</button>
+                    
+                    <button>0</button>
+                    <button>.</button>
+                    <button class="btn-op-light">%</button>
+                    <button class="btn-op">+</button>
+                    
+                    <button class="btn-equal span-4">=</button>
                 </div>
-
-                <div id="podcast-player-container" class="player-container" style="display: none;">
-                    <div class="select-wrapper">
-                        <select id="podcast-select" class="player-select"></select>
-                    </div>
-                    <!-- 這就是第三方播放器，只需給它一個 ID -->
-                    <podcast-player id="podcast-player-element"></podcast-player>
-                </div>
-                <!-- ▲▲▲【修改結束】▲▲▲ -->
             </div>
         </div>
     </div>
@@ -131,218 +142,314 @@
     <audio id="background-audio" preload="auto"></audio>
 
     <script src="links.js"></script>
-    
     <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        // ... (頁面通用邏輯和計算機邏輯，與之前相同，此處省略以保持簡潔) ...
-        // 為了確保不遺漏，以下提供完整的 JS 內容
-        
-        // --- 模組一：頁面通用邏輯 (跑馬燈、時鐘、背景音樂) ---
-        // (此處省略，因內容未變)
+        document.addEventListener('DOMContentLoaded', function() {
+            
+            // 跑馬燈與按鈕邏輯
+            const quoteToggleButton = document.getElementById('quote-toggle-button');
+            const marqueeContainer = document.getElementById('marquee-container');
+            const marqueeText = document.getElementById('marquee-text-dynamic');
+            
+            let isQuoteVisible = false;
+            let isFetching = false;
 
-        // --- 模組二：計算機邏輯 ---
-        // (此處省略，因內容未變)
-
-        // ▼▼▼【已重構】線上音訊播放器邏輯 ▼▼▼
-        const MainPlayer = {
-            // --- 資料庫 ---
-            radioData: [
-                { name: "中廣新聞網", url: "https://hls.mediaspot.cc/bcc_news/smil:bcc_news.smil/playlist.m3u8", type: "hls" },
-                { name: "News98 新聞網", url: "https://broadcast.news98.com.tw/audio/98news", type: "direct" },
-                { name: "飛碟電台", url: "https://hls.media.stream.live/hls/uforadiolive/live/playlist.m3u8", type: "hls" },
-                { name: "警察廣播電台 (全國)", url: "https://hls.gov.taipei/live/pbs/playlist.m3u8", type: "hls" },
-                { name: "POP Radio 台北流行廣播", url: "https://hichannel.hinet.net/live/pool/149/hls/live.m3u8", type: "hls" },
-                { name: "環宇廣播電台", url: "https://cast.und.com.tw/967", type: "direct" },
-                { name: "Hit FM 聯播網", url: "https://s2.rcs.revma.com/1st3r02anx8uv", type: "direct" },
-                { name: "中廣音樂網 iRadio", url: "https://hls.mediaspot.cc/bcc_imusic/smil:bcc_imusic.smil/playlist.m3u8", type: "hls" },
-                { name: "KISS Radio", url: "https://kissradio.tw.prod.boltdns.net/hls/live/2022837/971CH01/master.m3u8", type: "hls" },
-                { name: "Apple Line 蘋果線上", url: "https://media.apple-line.com/appleline.mp3", type: "direct" },
-                { name: "Best Radio 好事聯播網", url: "https://s4.rcs.revma.com/ypqt590xwz8uv", type: "direct" },
-                { name: "Asia FM 亞太電台", url: "https://stream.asiafm.com.tw/asiafm_web", type: "direct" },
-                { name: "ICRT", url: "https://live.icrt.com.tw/live", type: "direct" },
-                { name: "Classical FM 97.7 古典音樂台", url: "https://live.classical-radio.com.tw/live", type: "direct" },
-                { name: "Bravo FM 91.3 (台北都會音樂台)", url: "https://onair.bravo913.com.tw/BravoRadio", type: "direct" },
-                { name: "國立教育廣播電臺 (臺北)", url: "https://hls.ner.gov.tw/live/ner/playlist.m3u8", type: "hls" },
-                { name: "中央廣播電臺 (國語)", url: "https://livestream.rti.org.tw/hls-live/live/stream1/playlist.m3u8", type: "hls" },
-                { name: "台北廣播電台 (FM 93.1)", url: "https://hls.gov.taipei/live/Tpeg/playlist.m3u8", type: "hls" },
-                { name: "高雄廣播電台 (FM 94.3)", url: "https://hls.kbs.gov.tw/KbsLive/_definst_/KbsLive/playlist.m3u8", type: "hls" },
-                { name: "寶島新聲", url: "https://live.superfm98-5.com.tw/superfm985", type: "direct" }
-            ],
-            podcastData: [
-                { category: "法律與時事", name: "法客電台 by 法客 Fank", rssUrl: "https://rss.soundon.fm/podcasts/4222a088-722a-4467-941d-3b566537b8d7" },
-                { category: "法律與時事", name: "法律白話文運動", rssUrl: "https://feeds.soundon.fm/podcasts/110924d5-4ac1-43b3-85e6-75f284457f5c" },
-                { category: "法律與時事", name: "瑩真律師", rssUrl: "https://feeds.soundon.fm/podcasts/3506c257-22d7-4861-a53b-0105b4e311a2" },
-                { category: "法律與時事", name: "雞蛋糕律師aka說書人", rssUrl: "https://feeds.soundon.fm/podcasts/7e299615-5592-4742-99b9-d102be8d1c7c" },
-                { category: "法律與時事", name: "法律敲敲門", rssUrl: "https://feeds.soundon.fm/podcasts/b70ba5e6-126a-493a-8b1b-c1212b1a0300" },
-                { category: "法律與時事", name: "敏迪選讀", rssUrl: "https://feeds.soundon.fm/podcasts/f233b8a8-e43b-47e4-b778-a261c15d436f" },
-                { category: "法律與時事", name: "百靈果 News", rssUrl: "https://feeds.soundon.fm/podcasts/8c138760-b396-444a-a032-5c326e0b73c4.xml" },
-                { category: "職場與技能", name: "大人的 Small Talk", rssUrl: "https://feeds.soundon.fm/podcasts/116235b6-a212-42a9-8743-a1c1ac40b37e" },
-                { category: "職場與技能", name: "佐編茶水間 (Zoey)", rssUrl: "https://rss.soundon.fm/podcasts/02a99d68-7552-472e-8a21-be4f2d3714b6" },
-                { category: "職場與技能", name: "星箭廣播", rssUrl: "https://feeds.simplecast.com/7r1T0kI1" },
-                { category: "職場與技能", name: "最近工作還好嗎", rssUrl: "https://feeds.soundon.fm/podcasts/8a68b726-24e5-4f7f-8636-a36c92d506f3" },
-                { category: "職場與技能", name: "PM大小事", rssUrl: "https://feeds.soundon.fm/podcasts/f6d74702-835c-4a33-9118-87a329c66e2c" },
-                { category: "職場與技能", name: "讓思想去旅行", rssUrl: "https://feeds.soundon.fm/podcasts/983942b0-8c2a-4847-a864-779836173d1f" },
-                { category: "人資與管理", name: "人資主管UP學", rssUrl: "https://open.firstory.me/rss/user/ckg4zvea5628208759j1ksmg6" },
-                { category: "人資與管理", name: "一談就贏：Alex 的談判學", rssUrl: "https://feeds.soundon.fm/podcasts/88563335-d218-4a6c-941f-a5f36e8b4e76" },
-                { category: "人資與管理", name: "Vista寫作陪伴計畫", rssUrl: "https://feeds.soundon.fm/podcasts/11f005a3-71a2-4752-b43d-6b5ec63046f4" },
-                { category: "人資與管理", name: "BFA 簡報編輯室", rssUrl: "https://feeds.soundon.fm/podcasts/3b5a1b3c-11dc-4a7b-a48e-0f738a08d9f4" },
-                { category: "綜合熱門", name: "台灣通勤第一品牌", rssUrl: "https://feeds.soundon.fm/podcasts/122f8773-a8b9-4f51-9e7f-055365559c73.xml" },
-                { category: "綜合熱門", name: "聽天下：天下雜誌", rssUrl: "https://storage.googleapis.com/cw-podcast-rss-feed/cw_podcast_all.xml" },
-                { category: "綜合熱門", name: "吳淡如人生實用商學院", rssUrl: "https://feeds.soundon.fm/podcasts/c3912a76-9280-485a-a82f-2d6f8f17049c.xml" },
-                { category: "綜合熱門", name: "好味小姐開束縛我還你原形", rssUrl: "https://feeds.soundon.fm/podcasts/a59025e1-feb7-4584-a15e-a6a9644f6f26.xml" },
-                { category: "綜合熱門", name: "從前從前", rssUrl: "https://feeds.soundon.fm/podcasts/a4dc689b-f111-468a-8534-75c13e4b7501.xml" },
-                { category: "綜合熱門", name: "呱吉", rssUrl: "https://feeds.soundon.fm/podcasts/2ea60017-d586-4444-a55e-4b6b6c0e532b.xml" },
-                { category: "投資理財", name: "Gooaye 股癌", rssUrl: "https://feeds.soundon.fm/podcasts/a111f0a8-f472-4809-84b2-a421a2b25547.xml" },
-                { category: "投資理財", name: "M觀點", rssUrl: "https://feeds.soundon.fm/podcasts/e3bc0062-a4a9-4786-8a03-c6f31f77d3f8" },
-                { category: "投資理財", name: "財報狗", rssUrl: "https://feeds.soundon.fm/podcasts/8fa97672-2357-4228-a3f2-11c070c7329b" },
-                { category: "投資理財", name: "美股K線 anchored on Hope", rssUrl: "https://feeds.soundon.fm/podcasts/c9c48858-a56f-4221-8207-3382c7a70196" },
-                { category: "投資理財", name: "MacroMicro 財經M平方", rssUrl: "https://feeds.soundon.fm/podcasts/b52382c4-8067-4217-862d-9475949d11fc" },
-                { category: "投資理財", name: "JC財經觀點", rssUrl: "https://feeds.soundon.fm/podcasts/1105e1a1-9492-4914-a58d-7582ba95955e" },
-                { category: "投資理財", name: "游庭皓的財經皓角", rssUrl: "https://feeds.soundon.fm/podcasts/1e58a785-f55a-4e20-95b6-7647240a5e8e" },
-            ],
-
-            // 初始化
-            init: function() {
-                this.cacheDOMElements();
-                this.hls = null;
-                this.bindEvents();
-                this.initRadio();
-                this.initPodcast();
-            },
-
-            cacheDOMElements: function() {
-                this.modal = document.getElementById('player-modal');
-                this.openBtn = document.getElementById('open-player-btn');
-                this.closeBtn = document.getElementById('close-player-btn');
-                this.modeToggle = document.getElementById('player-mode-toggle');
+            async function fetchAndSetQuote() {
+                if (isFetching) return;
+                isFetching = true;
+                marqueeText.textContent = '每日名言載入中...';
                 
-                this.radioContainer = document.getElementById('radio-player-container');
-                this.radioSelect = document.getElementById('radio-select');
-                this.radioAudio = document.getElementById('radio-audio-element');
+                try {
+                    const quoteProxyUrl = `https://api.allorigins.win/get?url=${encodeURIComponent('https://zenquotes.io/api/random')}`;
+                    const quoteResponse = await fetch(quoteProxyUrl, { cache: 'no-cache' });
+                    if (!quoteResponse.ok) throw new Error('名言API請求失敗');
+                    
+                    const quoteData = JSON.parse((await quoteResponse.json()).contents);
+                    if (!quoteData || quoteData.length === 0) throw new Error('無法解析名言內容');
 
-                this.podcastContainer = document.getElementById('podcast-player-container');
-                this.podcastSelect = document.getElementById('podcast-select');
-                this.podcastPlayer = document.getElementById('podcast-player-element');
-            },
+                    const englishQuote = quoteData[0].q;
+                    const author = quoteData[0].a;
 
-            bindEvents: function() {
-                this.openBtn.addEventListener('click', (e) => { e.preventDefault(); this.modal.classList.add('is-visible'); });
-                this.closeBtn.addEventListener('click', () => this.close());
-                this.modal.addEventListener('click', (e) => { if (e.target === this.modal) this.close(); });
-                this.modeToggle.addEventListener('change', () => this.handleModeChange());
-            },
-
-            close: function() {
-                this.modal.classList.remove('is-visible');
-                this.stopAllPlayback();
-            },
-
-            handleModeChange: function() {
-                const isPodcastMode = this.modeToggle.checked;
-                this.stopAllPlayback();
-                this.radioContainer.style.display = isPodcastMode ? 'none' : 'block';
-                this.podcastContainer.style.display = isPodcastMode ? 'block' : 'none';
-            },
-
-            stopAllPlayback: function() {
-                // 停止廣播
-                this.radioAudio.pause();
-                this.radioAudio.src = '';
-                if (this.hls) {
-                    this.hls.destroy();
-                    this.hls = null;
-                }
-                // 停止 Podcast (移除 src 會讓 podcast-player 重置)
-                if (this.podcastPlayer.hasAttribute('url')) {
-                   this.podcastPlayer.removeAttribute('url');
-                }
-            },
-            
-            // --- Radio 相關邏輯 ---
-            initRadio: function() {
-                this.populateSelect(this.radioSelect, this.radioData, 'url', 'name');
-                this.radioSelect.addEventListener('change', (e) => this.playSelectedRadio(e));
-            },
-            
-            playSelectedRadio: function(e) {
-                const selectedOption = e.target.options[e.target.selectedIndex];
-                const url = selectedOption.value;
-                const type = selectedOption.dataset.type;
-
-                if (!url) {
-                    this.stopAllPlayback();
-                    return;
-                }
-
-                this.stopAllPlayback(); // 先停止所有播放
-
-                if (type === 'hls') {
-                    if (Hls.isSupported()) {
-                        this.hls = new Hls();
-                        this.hls.loadSource(url);
-                        this.hls.attachMedia(this.radioAudio);
-                        this.hls.on(Hls.Events.MANIFEST_PARSED, () => {
-                            this.radioAudio.play().catch(err => console.error("HLS Play Error:", err));
-                        });
-                    } else if (this.radioAudio.canPlayType('application/vnd.apple.mpegurl')) {
-                        this.radioAudio.src = url;
-                        this.radioAudio.play().catch(err => console.error("Native HLS Play Error:", err));
+                    try {
+                        const translateUrl = `https://api.mymemory.translated.net/get?q=${encodeURIComponent(englishQuote)}&langpair=en|zh-TW`;
+                        const translateResponse = await fetch(translateUrl);
+                        const translateData = await translateResponse.json();
+                        const translatedText = translateData.responseData.translatedText;
+                        marqueeText.textContent = `"${englishQuote}" (${translatedText}) — ${author}`;
+                    } catch (translationError) {
+                        marqueeText.textContent = `"${englishQuote}" — ${author}`;
                     }
-                } else { // direct
-                    this.radioAudio.src = url;
-                    this.radioAudio.play().catch(err => console.error("Direct Play Error:", err));
-                }
-            },
-
-            // --- Podcast 相關邏輯 ---
-            initPodcast: function() {
-                this.populateSelect(this.podcastSelect, this.podcastData, 'rssUrl', 'name');
-                this.podcastSelect.addEventListener('change', (e) => this.playSelectedPodcast(e));
-            },
-            
-            playSelectedPodcast: function(e) {
-                const rssUrl = e.target.value;
-                if (rssUrl) {
-                    // 直接將 RSS url 賦值給第三方元件，它會自動處理後續所有事
-                    this.podcastPlayer.setAttribute('url', rssUrl);
-                } else {
-                    // 如果選擇了 "--請選擇--"，則移除 url 讓播放器重置
-                    this.podcastPlayer.removeAttribute('url');
-                }
-            },
-
-            // --- 通用工具 ---
-            populateSelect: function(selectElement, data, valueKey, textKey) {
-                selectElement.innerHTML = `<option value="">--- 請選擇 ---</option>`;
-                if (data.length > 0 && data[0].category) {
-                    let currentGroup = null;
-                    let optgroupElement = null;
-                    data.forEach(item => {
-                        if (item.category !== currentGroup) {
-                            currentGroup = item.category;
-                            optgroupElement = document.createElement('optgroup');
-                            optgroupElement.label = currentGroup;
-                            selectElement.appendChild(optgroupElement);
-                        }
-                        const option = document.createElement('option');
-                        option.value = item[valueKey];
-                        option.textContent = item[textKey];
-                        if (optgroupElement) optgroupElement.appendChild(option);
-                    });
-                } else {
-                    data.forEach(item => {
-                        const option = document.createElement('option');
-                        option.value = item[valueKey];
-                        option.textContent = item[textKey];
-                        if (item.type) option.dataset.type = item.type;
-                        selectElement.appendChild(option);
-                    });
+                } catch (error) {
+                    console.error('抓取名言時發生錯誤:', error);
+                    marqueeText.textContent = '讀取每日名言失敗，將顯示預設內容。 "The journey of a thousand miles begins with a single step." — Lao Tzu';
+                } finally {
+                    isFetching = false;
                 }
             }
-        };
-        MainPlayer.init();
-    });
+
+            function startMarqueeAnimation() {
+                marqueeText.classList.remove('is-animating');
+                void marqueeText.offsetWidth;
+
+                const isMobile = window.innerWidth <= 767;
+
+                if (!isMobile) {
+                    const containerWidth = marqueeContainer.offsetWidth;
+                    const textWidth = marqueeText.offsetWidth;
+                    const finalPosition = (containerWidth - textWidth) / 2;
+                    
+                    let dynamicStyle = document.getElementById('marquee-dynamic-styles');
+                    if (!dynamicStyle) {
+                        dynamicStyle = document.createElement('style');
+                        dynamicStyle.id = 'marquee-dynamic-styles';
+                        document.head.appendChild(dynamicStyle);
+                    }
+                    dynamicStyle.innerHTML = `
+                        @keyframes slide-in-and-stop {
+                            from { transform: translateX(100vw); }
+                            to { transform: translateX(${finalPosition}px); }
+                        }
+                    `;
+                }
+                marqueeText.classList.add('is-animating');
+            }
+            
+            quoteToggleButton.addEventListener('click', async () => {
+                isQuoteVisible = !isQuoteVisible;
+                quoteToggleButton.classList.toggle('active', isQuoteVisible);
+                marqueeContainer.classList.toggle('is-visible', isQuoteVisible);
+
+                if (isQuoteVisible) {
+                    await fetchAndSetQuote();
+                    setTimeout(startMarqueeAnimation, 500);
+                } else {
+                    marqueeText.classList.remove('is-animating');
+                }
+            });
+
+
+            // 日期與時間的完整邏輯
+            const display = document.getElementById('split-flap-display');
+            if (display) {
+                let previousString = '';
+
+                function updateSplitFlap() {
+                    const now = new Date();
+                    const year = now.getFullYear();
+                    const month = (now.getMonth() + 1).toString().padStart(2, '0');
+                    const day = now.getDate().toString().padStart(2, '0');
+                    const hours = now.getHours().toString().padStart(2, '0');
+                    const minutes = now.getMinutes().toString().padStart(2, '0');
+                    const weekdays = ["週日", "週一", "週二", "週三", "週四", "週五", "週六"];
+                    const weekday = weekdays[now.getDay()];
+                    const newString = `${year}年 ${month}月${day}日 (${weekday}) ${hours}:${minutes}`;
+
+                    if (previousString === '') {
+                        display.innerHTML = newString.split('').map(char => `<span class="char">${char === ' ' ? ' ' : char}</span>`).join('');
+                        previousString = newString;
+                        return;
+                    }
+
+                    if (newString !== previousString) {
+                        const chars = display.querySelectorAll('.char');
+                        const len = Math.min(newString.length, chars.length);
+                        for (let i = 0; i < len; i++) {
+                            if (newString[i] !== previousString[i]) {
+                                chars[i].innerHTML = newString[i] === ' ' ? ' ' : newString[i];
+                                chars[i].classList.add('updated');
+                                ((charElement) => {
+                                    setTimeout(() => {
+                                        charElement.classList.remove('updated');
+                                    }, 500);
+                                })(chars[i]);
+                            }
+                        }
+                        previousString = newString;
+                    }
+                }
+                setInterval(updateSplitFlap, 1000);
+                updateSplitFlap();
+            }
+
+            // 音樂播放器邏輯
+            const musicToggleButton = document.getElementById('music-toggle-button');
+            const audioPlayer = document.getElementById('background-audio');
+            if (musicToggleButton && audioPlayer) {
+                const musicPlaylist = [
+                    'music/background-music-calm-soft-340445.mp3',
+                    'music/background-music-soft-calm-336543.mp3',
+                    'music/background-music-soft-calm-ambient-335501.mp3',
+                    'music/no-copyright-music-soft-background-370295.mp3',
+                    'music/positive-ambient-background-ambient-euphoria-252100.mp3',
+                    'music/soft-background-music-368633.mp3'
+                ];
+
+                let currentTrackIndex = 0;
+
+                if (musicPlaylist.length > 0) {
+                    audioPlayer.src = musicPlaylist[currentTrackIndex];
+                }
+                
+                audioPlayer.pause();
+                
+                function togglePlayPause() {
+                    if (musicPlaylist.length === 0) {
+                        alert('音樂播放清單是空的！');
+                        return;
+                    }
+                    if (audioPlayer.paused) {
+                        audioPlayer.play().catch(error => {
+                            console.error("音樂播放失敗:", error);
+                            alert("無法播放音樂，可能是因為瀏覽器限制。請先與頁面互動後再試。");
+                        });
+                    } else {
+                        audioPlayer.pause();
+                    }
+                }
+
+                function playNextTrack() {
+                    currentTrackIndex = (currentTrackIndex + 1) % musicPlaylist.length;
+                    audioPlayer.src = musicPlaylist[currentTrackIndex];
+                    audioPlayer.play();
+                }
+
+                musicToggleButton.addEventListener('click', togglePlayPause);
+                audioPlayer.addEventListener('ended', playNextTrack);
+
+                audioPlayer.onplaying = function() {
+                    musicToggleButton.classList.add('playing');
+                };
+                audioPlayer.onpause = function() {
+                    musicToggleButton.classList.remove('playing');
+                };
+            }
+        });
     </script>
 
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // --- DOM Element Selection ---
+        const modal = document.getElementById('calculator-modal');
+        const openBtn = document.getElementById('open-calculator-btn');
+        const closeBtn = document.getElementById('close-calculator-btn');
+        const expressionDisplay = document.getElementById('calculator-expression');
+        const resultDisplay = document.getElementById('calculator-result');
+        const buttons = document.querySelector('.calculator-buttons');
+
+        // --- State Variables ---
+        let expression = '';
+        let isResultDisplayed = false;
+
+        // --- Core Functions ---
+        function clearAll() {
+            expression = '';
+            expressionDisplay.textContent = '';
+            resultDisplay.textContent = '0';
+            isResultDisplayed = false;
+        }
+
+        function deleteLast() {
+            if (isResultDisplayed) return; // Cannot delete from a final result
+            expression = expression.slice(0, -1);
+            updateDisplay();
+        }
+
+        function appendCharacter(char) {
+            // If a result is shown, start a new calculation
+            // unless the user presses an operator, in which case, use the result.
+            if (isResultDisplayed) {
+                if ('+-×÷%'.includes(char)) {
+                    // continue with the old result
+                } else {
+                    expression = ''; // start a new number
+                }
+                isResultDisplayed = false;
+            }
+            expression += char;
+            updateDisplay();
+        }
+
+        function safeEval(expr) {
+            if (!expr) return 0;
+            try {
+                let sanitizedExpr = expr
+                    .replace(/×/g, '*')
+                    .replace(/÷/g, '/')
+                    .replace(/%/g, '*0.01');
+
+                if (/[\+\-\*\/]$/.test(sanitizedExpr)) {
+                     sanitizedExpr = sanitizedExpr.slice(0,-1);
+                }
+                
+                if (!sanitizedExpr || sanitizedExpr === '()') return null;
+
+                const result = new Function('return ' + sanitizedExpr)();
+                
+                if (!isFinite(result)) return '錯誤';
+                return Math.round(result * 1e12) / 1e12;
+            } catch (error) {
+                return null;
+            }
+        }
+        
+        function updateDisplay() {
+            expressionDisplay.textContent = expression.replace(/\//g, '÷').replace(/\*/g, '×');
+            const previewResult = safeEval(expression);
+            if (previewResult !== null) {
+                resultDisplay.textContent = previewResult;
+            } else {
+                resultDisplay.textContent = '';
+            }
+        }
+        
+        // ▼▼▼【修改：全新的 calculateFinal 函數】▼▼▼
+        function calculateFinal() {
+            const finalResult = safeEval(expression);
+            if (finalResult !== null && finalResult !== '錯誤') {
+                // 不再顯示計算式和等於符號，直接清空上方
+                expressionDisplay.textContent = ''; 
+                resultDisplay.textContent = finalResult;
+                expression = String(finalResult); // 儲存結果以供下次計算
+                isResultDisplayed = true;
+            } else {
+                expressionDisplay.textContent = ''; // 出錯時也清空
+                resultDisplay.textContent = '語法錯誤';
+                expression = '';
+                isResultDisplayed = false;
+            }
+        }
+        // ▲▲▲【修改結束】▲▲▲
+
+        // --- Event Handlers ---
+        openBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            modal.style.display = 'block';
+        });
+
+        closeBtn.addEventListener('click', () => modal.style.display = 'none');
+        window.addEventListener('click', (e) => {
+            if (e.target == modal) modal.style.display = 'none';
+        });
+
+        buttons.addEventListener('click', function(e) {
+            if (!e.target.matches('button')) return;
+
+            const key = e.target.textContent;
+            
+            if (!isNaN(key) || key === '.') {
+                appendCharacter(key);
+            } else if ('+-×÷()'.includes(key)) {
+                appendCharacter(key);
+            } else if (key === '%') {
+                appendCharacter(key);
+            } else if (key === 'C') {
+                clearAll();
+            } else if (key === 'DEL') {
+                deleteLast();
+            } else if (key === '=') {
+                calculateFinal();
+            }
+        });
+    });
+    </script>
 </body>
 </html>
