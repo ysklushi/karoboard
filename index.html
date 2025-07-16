@@ -7,13 +7,10 @@
     
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <link rel="stylesheet" href="style.css">
-    <!-- 為了讓航班看板字體更好看，引入 Google Fonts 的等寬字體 -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@500&display=swap" rel="stylesheet">
-    <!-- ▼▼▼ 新增：為了播放 HLS 格式的廣播串流 ▼▼▼ -->
     <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
-    <!-- ▲▲▲ 新增結束 ▲▲▲ -->
 </head>
 <body>
 
@@ -21,9 +18,7 @@
         <div class="header-left-panel">
             <h1>過勞儀表板</h1>
             <div id="datetime-container">
-                <div class="split-flap-display" id="split-flap-display">
-                    <!-- JavaScript 會自動填入內容 -->
-                </div>
+                <div class="split-flap-display" id="split-flap-display"></div>
             </div>
             <div class="icon-group">
                 <div id="music-toggle-button" class="music-icon-container" title="播放/暫停背景音樂">
@@ -56,7 +51,6 @@
                 </div>
                 <button type="submit" style="display: none;">搜尋</button>
             </form>
-
             <form id="lawbank-search-form" class="search-form">
                 <div class="search-box">
                     <i class="fa-solid fa-book-atlas search-icon"></i>
@@ -64,7 +58,6 @@
                 </div>
                 <button type="submit" style="display: none;">搜尋</button>
             </form>
-
         </div>
     </header>
 
@@ -115,31 +108,11 @@
                     <div id="calculator-result" class="calculator-result">0</div>
                 </div>
                 <div class="calculator-buttons">
-                    <button class="btn-op-light">C</button>
-                    <button class="btn-op-light">(</button>
-                    <button class="btn-op-light">)</button>
-                    <button class="btn-op-light">DEL</button>
-
-                    <button>7</button>
-                    <button>8</button>
-                    <button>9</button>
-                    <button class="btn-op">÷</button>
-                    
-                    <button>4</button>
-                    <button>5</button>
-                    <button>6</button>
-                    <button class="btn-op">×</button>
-                    
-                    <button>1</button>
-                    <button>2</button>
-                    <button>3</button>
-                    <button class="btn-op">-</button>
-                    
-                    <button>0</button>
-                    <button>.</button>
-                    <button class="btn-op-light">%</button>
-                    <button class="btn-op">+</button>
-                    
+                     <button class="btn-op-light">C</button><button class="btn-op-light">(</button><button class="btn-op-light">)</button><button class="btn-op-light">DEL</button>
+                    <button>7</button><button>8</button><button>9</button><button class="btn-op">÷</button>
+                    <button>4</button><button>5</button><button>6</button><button class="btn-op">×</button>
+                    <button>1</button><button>2</button><button>3</button><button class="btn-op">-</button>
+                    <button>0</button><button>.</button><button class="btn-op-light">%</button><button class="btn-op">+</button>
                     <button class="btn-equal span-4">=</button>
                 </div>
             </div>
@@ -159,7 +132,6 @@
                     <label for="player-mode-toggle" class="toggle-label toggle-podcast">Podcast</label>
                     <div class="toggle-slider"></div>
                 </div>
-
                 <div class="player-controls">
                     <div class="select-wrapper">
                         <select id="player-show-select" class="player-select"></select>
@@ -168,11 +140,9 @@
                         <select id="player-episode-select" class="player-select"></select>
                     </div>
                 </div>
-
                 <div class="player-main-area">
                     <audio id="main-audio-player" controls preload="metadata"></audio>
                 </div>
-
                 <div id="player-loading-indicator" class="loading-indicator" style="display: none;">
                     <div class="spinner"></div>
                     <p>正在載入 Podcast 節目單...</p>
@@ -181,101 +151,69 @@
         </div>
     </div>
 
-
     <audio id="background-audio" preload="auto"></audio>
 
     <script src="links.js"></script>
+    
+    <!-- ▼▼▼【已重構】單一、整合的 JavaScript 程式碼區塊 ▼▼▼ -->
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            
-            // 跑馬燈與按鈕邏輯
-            const quoteToggleButton = document.getElementById('quote-toggle-button');
-            const marqueeContainer = document.getElementById('marquee-container');
-            const marqueeText = document.getElementById('marquee-text-dynamic');
-            
-            let isQuoteVisible = false;
-            let isFetching = false;
+    document.addEventListener('DOMContentLoaded', function() {
 
-            async function fetchAndSetQuote() {
-                if (isFetching) return;
-                isFetching = true;
-                marqueeText.textContent = '每日名言載入中...';
-                
-                try {
-                    const quoteProxyUrl = `https://api.allorigins.win/get?url=${encodeURIComponent('https://zenquotes.io/api/random')}`;
-                    const quoteResponse = await fetch(quoteProxyUrl, { cache: 'no-cache' });
-                    if (!quoteResponse.ok) throw new Error('名言API請求失敗');
-                    
-                    const quoteData = JSON.parse((await quoteResponse.json()).contents);
-                    if (!quoteData || quoteData.length === 0) throw new Error('無法解析名言內容');
+        // --- 模組一：頁面通用邏輯 (跑馬燈、時鐘、背景音樂) ---
+        const PageLogic = {
+            init: function() {
+                this.initQuoteMarquee();
+                this.initSplitFlapClock();
+                this.initBackgroundMusic();
+            },
 
-                    const englishQuote = quoteData[0].q;
-                    const author = quoteData[0].a;
+            initQuoteMarquee: function() {
+                const quoteToggleButton = document.getElementById('quote-toggle-button');
+                const marqueeContainer = document.getElementById('marquee-container');
+                const marqueeText = document.getElementById('marquee-text-dynamic');
+                if (!quoteToggleButton || !marqueeContainer || !marqueeText) return;
 
+                let isQuoteVisible = false;
+                let isFetching = false;
+
+                const fetchAndSetQuote = async () => {
+                    if (isFetching) return;
+                    isFetching = true;
+                    marqueeText.textContent = '每日名言載入中...';
                     try {
+                        const proxyUrl = `https://api.allorigins.win/get?url=${encodeURIComponent('https://zenquotes.io/api/random')}`;
+                        const response = await fetch(proxyUrl, { cache: 'no-cache' });
+                        if (!response.ok) throw new Error('名言API請求失敗');
+                        const data = JSON.parse((await response.json()).contents);
+                        const { q: englishQuote, a: author } = data[0];
                         const translateUrl = `https://api.mymemory.translated.net/get?q=${encodeURIComponent(englishQuote)}&langpair=en|zh-TW`;
                         const translateResponse = await fetch(translateUrl);
                         const translateData = await translateResponse.json();
-                        const translatedText = translateData.responseData.translatedText;
-                        marqueeText.textContent = `"${englishQuote}" (${translatedText}) — ${author}`;
-                    } catch (translationError) {
-                        marqueeText.textContent = `"${englishQuote}" — ${author}`;
+                        marqueeText.textContent = `"${englishQuote}" (${translateData.responseData.translatedText}) — ${author}`;
+                    } catch (error) {
+                        console.error('抓取名言時發生錯誤:', error);
+                        marqueeText.textContent = '讀取每日名言失敗。 "The journey of a thousand miles begins with a single step." — Lao Tzu';
+                    } finally {
+                        isFetching = false;
                     }
-                } catch (error) {
-                    console.error('抓取名言時發生錯誤:', error);
-                    marqueeText.textContent = '讀取每日名言失敗，將顯示預設內容。 "The journey of a thousand miles begins with a single step." — Lao Tzu';
-                } finally {
-                    isFetching = false;
-                }
-            }
-
-            function startMarqueeAnimation() {
-                marqueeText.classList.remove('is-animating');
-                void marqueeText.offsetWidth;
-
-                const isMobile = window.innerWidth <= 767;
-
-                if (!isMobile) {
-                    const containerWidth = marqueeContainer.offsetWidth;
-                    const textWidth = marqueeText.offsetWidth;
-                    const finalPosition = (containerWidth - textWidth) / 2;
-                    
-                    let dynamicStyle = document.getElementById('marquee-dynamic-styles');
-                    if (!dynamicStyle) {
-                        dynamicStyle = document.createElement('style');
-                        dynamicStyle.id = 'marquee-dynamic-styles';
-                        document.head.appendChild(dynamicStyle);
+                };
+                
+                quoteToggleButton.addEventListener('click', async () => {
+                    isQuoteVisible = !isQuoteVisible;
+                    quoteToggleButton.classList.toggle('active', isQuoteVisible);
+                    marqueeContainer.classList.toggle('is-visible', isQuoteVisible);
+                    if (isQuoteVisible) {
+                        await fetchAndSetQuote();
                     }
-                    dynamicStyle.innerHTML = `
-                        @keyframes slide-in-and-stop {
-                            from { transform: translateX(100vw); }
-                            to { transform: translateX(${finalPosition}px); }
-                        }
-                    `;
-                }
-                marqueeText.classList.add('is-animating');
-            }
-            
-            quoteToggleButton.addEventListener('click', async () => {
-                isQuoteVisible = !isQuoteVisible;
-                quoteToggleButton.classList.toggle('active', isQuoteVisible);
-                marqueeContainer.classList.toggle('is-visible', isQuoteVisible);
+                });
+            },
 
-                if (isQuoteVisible) {
-                    await fetchAndSetQuote();
-                    setTimeout(startMarqueeAnimation, 500);
-                } else {
-                    marqueeText.classList.remove('is-animating');
-                }
-            });
-
-
-            // 日期與時間的完整邏輯
-            const display = document.getElementById('split-flap-display');
-            if (display) {
+            initSplitFlapClock: function() {
+                const display = document.getElementById('split-flap-display');
+                if (!display) return;
                 let previousString = '';
 
-                function updateSplitFlap() {
+                function update() {
                     const now = new Date();
                     const year = now.getFullYear();
                     const month = (now.getMonth() + 1).toString().padStart(2, '0');
@@ -286,472 +224,349 @@
                     const weekday = weekdays[now.getDay()];
                     const newString = `${year}年 ${month}月${day}日 (${weekday}) ${hours}:${minutes}`;
 
-                    if (previousString === '') {
+                    if (newString !== previousString) {
                         display.innerHTML = newString.split('').map(char => `<span class="char">${char === ' ' ? ' ' : char}</span>`).join('');
                         previousString = newString;
-                        return;
-                    }
-
-                    if (newString !== previousString) {
-                        const chars = display.querySelectorAll('.char');
-                        const len = Math.min(newString.length, chars.length);
-                        for (let i = 0; i < len; i++) {
-                            if (newString[i] !== previousString[i]) {
-                                chars[i].innerHTML = newString[i] === ' ' ? ' ' : newString[i];
-                                chars[i].classList.add('updated');
-                                ((charElement) => {
-                                    setTimeout(() => {
-                                        charElement.classList.remove('updated');
-                                    }, 500);
-                                })(chars[i]);
-                            }
-                        }
-                        previousString = newString;
                     }
                 }
-                setInterval(updateSplitFlap, 1000);
-                updateSplitFlap();
-            }
+                setInterval(update, 1000);
+                update();
+            },
 
-            // 音樂播放器邏輯
-            const musicToggleButton = document.getElementById('music-toggle-button');
-            const audioPlayer = document.getElementById('background-audio');
-            if (musicToggleButton && audioPlayer) {
-                const musicPlaylist = [
+            initBackgroundMusic: function() {
+                const musicToggleButton = document.getElementById('music-toggle-button');
+                const audioPlayer = document.getElementById('background-audio');
+                if (!musicToggleButton || !audioPlayer) return;
+                
+                const playlist = [
                     'music/background-music-calm-soft-340445.mp3',
                     'music/background-music-soft-calm-336543.mp3',
-                    'music/background-music-soft-calm-ambient-335501.mp3',
-                    'music/no-copyright-music-soft-background-370295.mp3',
-                    'music/positive-ambient-background-ambient-euphoria-252100.mp3',
-                    'music/soft-background-music-368633.mp3'
                 ];
-
                 let currentTrackIndex = 0;
+                if(playlist.length > 0) audioPlayer.src = playlist[currentTrackIndex];
 
-                if (musicPlaylist.length > 0) {
-                    audioPlayer.src = musicPlaylist[currentTrackIndex];
-                }
-                
-                audioPlayer.pause();
-                
-                function togglePlayPause() {
-                    if (musicPlaylist.length === 0) {
-                        alert('音樂播放清單是空的！');
-                        return;
-                    }
-                    if (audioPlayer.paused) {
-                        audioPlayer.play().catch(error => {
-                            console.error("音樂播放失敗:", error);
-                            alert("無法播放音樂，可能是因為瀏覽器限制。請先與頁面互動後再試。");
-                        });
-                    } else {
-                        audioPlayer.pause();
-                    }
-                }
-
-                function playNextTrack() {
-                    currentTrackIndex = (currentTrackIndex + 1) % musicPlaylist.length;
-                    audioPlayer.src = musicPlaylist[currentTrackIndex];
+                musicToggleButton.addEventListener('click', () => {
+                    if (playlist.length === 0) return;
+                    audioPlayer.paused ? audioPlayer.play() : audioPlayer.pause();
+                });
+                audioPlayer.addEventListener('ended', () => {
+                    currentTrackIndex = (currentTrackIndex + 1) % playlist.length;
+                    audioPlayer.src = playlist[currentTrackIndex];
                     audioPlayer.play();
-                }
-
-                musicToggleButton.addEventListener('click', togglePlayPause);
-                audioPlayer.addEventListener('ended', playNextTrack);
-
-                audioPlayer.onplaying = function() {
-                    musicToggleButton.classList.add('playing');
-                };
-                audioPlayer.onpause = function() {
-                    musicToggleButton.classList.remove('playing');
-                };
+                });
+                audioPlayer.onplaying = () => musicToggleButton.classList.add('playing');
+                audioPlayer.onpause = () => musicToggleButton.classList.remove('playing');
             }
-        });
-    </script>
+        };
+        PageLogic.init();
 
-    <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        // --- DOM Element Selection ---
-        const modal = document.getElementById('calculator-modal');
-        const openBtn = document.getElementById('open-calculator-btn');
-        const closeBtn = document.getElementById('close-calculator-btn');
-        const expressionDisplay = document.getElementById('calculator-expression');
-        const resultDisplay = document.getElementById('calculator-result');
-        const buttons = document.querySelector('.calculator-buttons');
+        // --- 模組二：計算機邏輯 ---
+        const Calculator = {
+            init: function() {
+                this.modal = document.getElementById('calculator-modal');
+                this.openBtn = document.getElementById('open-calculator-btn');
+                this.closeBtn = document.getElementById('close-calculator-btn');
+                this.expressionDisplay = document.getElementById('calculator-expression');
+                this.resultDisplay = document.getElementById('calculator-result');
+                this.buttons = document.querySelector('.calculator-buttons');
+                if (!this.modal || !this.openBtn) return;
+                this.expression = '';
+                this.isResultDisplayed = false;
+                this.addEventListeners();
+            },
+            addEventListeners: function() {
+                this.openBtn.addEventListener('click', e => { e.preventDefault(); this.modal.style.display = 'block'; });
+                this.closeBtn.addEventListener('click', () => this.modal.style.display = 'none');
+                window.addEventListener('click', e => { if (e.target == this.modal) this.modal.style.display = 'none'; });
+                this.buttons.addEventListener('click', e => this.handleButtonPress(e));
+            },
+            handleButtonPress: function(e) {
+                if (!e.target.matches('button')) return;
+                const key = e.target.textContent;
+                if (!isNaN(key) || key === '.') { this.appendCharacter(key); }
+                else if ('+-×÷()'.includes(key)) { this.appendCharacter(key); }
+                else if (key === '%') { this.appendCharacter(key); }
+                else if (key === 'C') { this.clearAll(); }
+                else if (key === 'DEL') { this.deleteLast(); }
+                else if (key === '=') { this.calculateFinal(); }
+            },
+            appendCharacter: function(char) {
+                if (this.isResultDisplayed) {
+                    if (!'+-×÷%'.includes(char)) this.expression = '';
+                    this.isResultDisplayed = false;
+                }
+                this.expression += char;
+                this.updateDisplay();
+            },
+            updateDisplay: function() {
+                this.expressionDisplay.textContent = this.expression.replace(/\*/g, '×').replace(/\//g, '÷');
+            },
+            calculateFinal: function() {
+                try {
+                    const sanitizedExpr = this.expression.replace(/×/g, '*').replace(/÷/g, '/');
+                    const result = new Function('return ' + sanitizedExpr)();
+                    this.resultDisplay.textContent = Math.round(result * 1e12) / 1e12;
+                    this.expression = String(result);
+                } catch {
+                    this.resultDisplay.textContent = '錯誤';
+                    this.expression = '';
+                }
+                this.isResultDisplayed = true;
+                this.updateDisplay();
+            },
+            clearAll: function() {
+                this.expression = '';
+                this.expressionDisplay.textContent = '';
+                this.resultDisplay.textContent = '0';
+                this.isResultDisplayed = false;
+            },
+            deleteLast: function() {
+                if(this.isResultDisplayed) return;
+                this.expression = this.expression.slice(0, -1);
+                this.updateDisplay();
+            }
+        };
+        Calculator.init();
 
-        // --- State Variables ---
-        let expression = '';
-        let isResultDisplayed = false;
+        // --- 模組三：線上音訊播放器邏輯 ---
+        const AudioPlayer = {
+            // 資料庫
+            radioData: [
+                { name: "中廣新聞網", url: "https://hls.mediaspot.cc/bcc_news/smil:bcc_news.smil/playlist.m3u8", type: "hls" },
+                { name: "News98 新聞網", url: "https://broadcast.news98.com.tw/audio/98news", type: "direct" },
+                { name: "飛碟電台", url: "https://hls.media.stream.live/hls/uforadiolive/live/playlist.m3u8", type: "hls" },
+                { name: "警察廣播電台 (全國)", url: "https://hls.gov.taipei/live/pbs/playlist.m3u8", type: "hls" },
+                { name: "POP Radio 台北流行廣播", url: "https://hichannel.hinet.net/live/pool/149/hls/live.m3u8", type: "hls" },
+                { name: "環宇廣播電台", url: "https://cast.und.com.tw/967", type: "direct" },
+                { name: "Hit FM 聯播網", url: "https://s2.rcs.revma.com/1st3r02anx8uv", type: "direct" },
+                { name: "中廣音樂網 iRadio", url: "https://hls.mediaspot.cc/bcc_imusic/smil:bcc_imusic.smil/playlist.m3u8", type: "hls" },
+                { name: "KISS Radio", url: "https://kissradio.tw.prod.boltdns.net/hls/live/2022837/971CH01/master.m3u8", type: "hls" },
+                { name: "Apple Line 蘋果線上", url: "https://media.apple-line.com/appleline.mp3", type: "direct" },
+                { name: "Best Radio 好事聯播網", url: "https://s4.rcs.revma.com/ypqt590xwz8uv", type: "direct" },
+                { name: "Asia FM 亞太電台", url: "https://stream.asiafm.com.tw/asiafm_web", type: "direct" },
+                { name: "ICRT", url: "https://live.icrt.com.tw/live", type: "direct" },
+                { name: "Classical FM 97.7 古典音樂台", url: "https://live.classical-radio.com.tw/live", type: "direct" },
+                { name: "Bravo FM 91.3 (台北都會音樂台)", url: "https://onair.bravo913.com.tw/BravoRadio", type: "direct" },
+                { name: "國立教育廣播電臺 (臺北)", url: "https://hls.ner.gov.tw/live/ner/playlist.m3u8", type: "hls" },
+                { name: "中央廣播電臺 (國語)", url: "https://livestream.rti.org.tw/hls-live/live/stream1/playlist.m3u8", type: "hls" },
+                { name: "台北廣播電台 (FM 93.1)", url: "https://hls.gov.taipei/live/Tpeg/playlist.m3u8", type: "hls" },
+                { name: "高雄廣播電台 (FM 94.3)", url: "https://hls.kbs.gov.tw/KbsLive/_definst_/KbsLive/playlist.m3u8", type: "hls" },
+                { name: "寶島新聲", url: "https://live.superfm98-5.com.tw/superfm985", type: "direct" }
+            ],
+            podcastData: [
+                { category: "法律與時事", name: "法客電台 by 法客 Fank", rssUrl: "https://rss.soundon.fm/podcasts/4222a088-722a-4467-941d-3b566537b8d7" },
+                { category: "法律與時事", name: "法律白話文運動", rssUrl: "https://feeds.soundon.fm/podcasts/110924d5-4ac1-43b3-85e6-75f284457f5c" },
+                { category: "法律與時事", name: "瑩真律師", rssUrl: "https://feeds.soundon.fm/podcasts/3506c257-22d7-4861-a53b-0105b4e311a2" },
+                { category: "法律與時事", name: "雞蛋糕律師aka說書人", rssUrl: "https://feeds.soundon.fm/podcasts/7e299615-5592-4742-99b9-d102be8d1c7c" },
+                { category: "法律與時事", name: "法律敲敲門", rssUrl: "https://feeds.soundon.fm/podcasts/b70ba5e6-126a-493a-8b1b-c1212b1a0300" },
+                { category: "法律與時事", name: "敏迪選讀", rssUrl: "https://feeds.soundon.fm/podcasts/f233b8a8-e43b-47e4-b778-a261c15d436f" },
+                { category: "法律與時事", name: "百靈果 News", rssUrl: "https://feeds.soundon.fm/podcasts/8c138760-b396-444a-a032-5c326e0b73c4.xml" },
+                { category: "職場與技能", name: "大人的 Small Talk", rssUrl: "https://feeds.soundon.fm/podcasts/116235b6-a212-42a9-8743-a1c1ac40b37e" },
+                { category: "職場與技能", name: "佐編茶水間 (Zoey)", rssUrl: "https://rss.soundon.fm/podcasts/02a99d68-7552-472e-8a21-be4f2d3714b6" },
+                { category: "職場與技能", name: "星箭廣播", rssUrl: "https://feeds.simplecast.com/7r1T0kI1" },
+                { category: "職場與技能", name: "最近工作還好嗎", rssUrl: "https://feeds.soundon.fm/podcasts/8a68b726-24e5-4f7f-8636-a36c92d506f3" },
+                { category: "職場與技能", name: "PM大小事", rssUrl: "https://feeds.soundon.fm/podcasts/f6d74702-835c-4a33-9118-87a329c66e2c" },
+                { category: "職場與技能", name: "讓思想去旅行", rssUrl: "https://feeds.soundon.fm/podcasts/983942b0-8c2a-4847-a864-779836173d1f" },
+                { category: "人資與管理", name: "人資主管UP學", rssUrl: "https://open.firstory.me/rss/user/ckg4zvea5628208759j1ksmg6" },
+                { category: "人資與管理", name: "一談就贏：Alex 的談判學", rssUrl: "https://feeds.soundon.fm/podcasts/88563335-d218-4a6c-941f-a5f36e8b4e76" },
+                { category: "人資與管理", name: "Vista寫作陪伴計畫", rssUrl: "https://feeds.soundon.fm/podcasts/11f005a3-71a2-4752-b43d-6b5ec63046f4" },
+                { category: "人資與管理", name: "BFA 簡報編輯室", rssUrl: "https://feeds.soundon.fm/podcasts/3b5a1b3c-11dc-4a7b-a48e-0f738a08d9f4" },
+                { category: "綜合熱門", name: "台灣通勤第一品牌", rssUrl: "https://feeds.soundon.fm/podcasts/122f8773-a8b9-4f51-9e7f-055365559c73.xml" },
+                { category: "綜合熱門", name: "聽天下：天下雜誌", rssUrl: "https://storage.googleapis.com/cw-podcast-rss-feed/cw_podcast_all.xml" },
+                { category: "綜合熱門", name: "吳淡如人生實用商學院", rssUrl: "https://feeds.soundon.fm/podcasts/c3912a76-9280-485a-a82f-2d6f8f17049c.xml" },
+                { category: "綜合熱門", name: "好味小姐開束縛我還你原形", rssUrl: "https://feeds.soundon.fm/podcasts/a59025e1-feb7-4584-a15e-a6a9644f6f26.xml" },
+                { category: "綜合熱門", name: "從前從前", rssUrl: "https://feeds.soundon.fm/podcasts/a4dc689b-f111-468a-8534-75c13e4b7501.xml" },
+                { category: "綜合熱門", name: "呱吉", rssUrl: "https://feeds.soundon.fm/podcasts/2ea60017-d586-4444-a55e-4b6b6c0e532b.xml" },
+                { category: "投資理財", name: "Gooaye 股癌", rssUrl: "https://feeds.soundon.fm/podcasts/a111f0a8-f472-4809-84b2-a421a2b25547.xml" },
+                { category: "投資理財", name: "M觀點", rssUrl: "https://feeds.soundon.fm/podcasts/e3bc0062-a4a9-4786-8a03-c6f31f77d3f8" },
+                { category: "投資理財", name: "財報狗", rssUrl: "https://feeds.soundon.fm/podcasts/8fa97672-2357-4228-a3f2-11c070c7329b" },
+                { category: "投資理財", name: "美股K線 anchored on Hope", rssUrl: "https://feeds.soundon.fm/podcasts/c9c48858-a56f-4221-8207-3382c7a70196" },
+                { category: "投資理財", name: "MacroMicro 財經M平方", rssUrl: "https://feeds.soundon.fm/podcasts/b52382c4-8067-4217-862d-9475949d11fc" },
+                { category: "投資理財", name: "JC財經觀點", rssUrl: "https://feeds.soundon.fm/podcasts/1105e1a1-9492-4914-a58d-7582ba95955e" },
+                { category: "投資理財", name: "游庭皓的財經皓角", rssUrl: "https://feeds.soundon.fm/podcasts/1e58a785-f55a-4e20-95b6-7647240a5e8e" },
+            ],
 
-        // --- Core Functions ---
-        function clearAll() {
-            expression = '';
-            expressionDisplay.textContent = '';
-            resultDisplay.textContent = '0';
-            isResultDisplayed = false;
-        }
+            // 初始化
+            init: function() {
+                this.cacheDOMElements();
+                this.hls = null;
+                this.currentMode = 'radio';
+                this.bindEvents();
+                this.updateUIForMode(this.currentMode);
+            },
 
-        function deleteLast() {
-            if (isResultDisplayed) return; // Cannot delete from a final result
-            expression = expression.slice(0, -1);
-            updateDisplay();
-        }
+            // 快取 DOM 元素
+            cacheDOMElements: function() {
+                this.modal = document.getElementById('player-modal');
+                this.openBtn = document.getElementById('open-player-btn');
+                this.closeBtn = document.getElementById('close-player-btn');
+                this.modeToggle = document.getElementById('player-mode-toggle');
+                this.showSelect = document.getElementById('player-show-select');
+                this.episodeSelect = document.getElementById('player-episode-select');
+                this.episodeWrapper = document.getElementById('episode-select-wrapper');
+                this.audioPlayer = document.getElementById('main-audio-player');
+                this.loadingIndicator = document.getElementById('player-loading-indicator');
+            },
+            
+            // 綁定所有事件
+            bindEvents: function() {
+                this.openBtn.addEventListener('click', (e) => { e.preventDefault(); this.open(); });
+                this.closeBtn.addEventListener('click', () => this.close());
+                this.modal.addEventListener('click', (e) => { if (e.target === this.modal) this.close(); });
+                this.modeToggle.addEventListener('change', () => this.handleModeChange());
+                this.showSelect.addEventListener('change', (e) => this.handleShowChange(e));
+                this.episodeSelect.addEventListener('change', (e) => this.handleEpisodeChange(e));
+            },
 
-        function appendCharacter(char) {
-            if (isResultDisplayed) {
-                if ('+-×÷%'.includes(char)) {
-                    // continue with the old result
+            // 事件處理函式
+            handleModeChange: function() {
+                this.updateUIForMode(this.modeToggle.checked ? 'podcast' : 'radio');
+            },
+            handleShowChange: function(e) {
+                const selectedValue = e.target.value;
+                if (!selectedValue) {
+                    this.stop();
+                    if(this.currentMode === 'podcast') this.episodeSelect.innerHTML = '';
+                    return;
+                }
+                if (this.currentMode === 'radio') {
+                    const selectedOption = e.target.options[e.target.selectedIndex];
+                    const type = selectedOption.dataset.type;
+                    this.play(selectedValue, type);
                 } else {
-                    expression = ''; // start a new number
+                    this.fetchAndParseRSS(selectedValue);
                 }
-                isResultDisplayed = false;
-            }
-            expression += char;
-            updateDisplay();
-        }
-
-        function safeEval(expr) {
-            if (!expr) return 0;
-            try {
-                let sanitizedExpr = expr
-                    .replace(/×/g, '*')
-                    .replace(/÷/g, '/')
-                    .replace(/%/g, '*0.01');
-
-                if (/[\+\-\*\/]$/.test(sanitizedExpr)) {
-                     sanitizedExpr = sanitizedExpr.slice(0,-1);
+            },
+            handleEpisodeChange: function(e) {
+                const mp3Url = e.target.value;
+                if (mp3Url) {
+                    this.play(mp3Url, 'direct');
+                } else {
+                    this.stop();
                 }
-                
-                if (!sanitizedExpr || sanitizedExpr === '()') return null;
+            },
 
-                const result = new Function('return ' + sanitizedExpr)();
-                
-                if (!isFinite(result)) return '錯誤';
-                return Math.round(result * 1e12) / 1e12;
-            } catch (error) {
-                return null;
-            }
-        }
-        
-        function updateDisplay() {
-            expressionDisplay.textContent = expression.replace(/\//g, '÷').replace(/\*/g, '×');
-            const previewResult = safeEval(expression);
-            if (previewResult !== null) {
-                resultDisplay.textContent = previewResult;
-            } else {
-                resultDisplay.textContent = '';
-            }
-        }
-        
-        function calculateFinal() {
-            const finalResult = safeEval(expression);
-            if (finalResult !== null && finalResult !== '錯誤') {
-                expressionDisplay.textContent = ''; 
-                resultDisplay.textContent = finalResult;
-                expression = String(finalResult); 
-                isResultDisplayed = true;
-            } else {
-                expressionDisplay.textContent = ''; 
-                resultDisplay.textContent = '語法錯誤';
-                expression = '';
-                isResultDisplayed = false;
-            }
-        }
-
-        // --- Event Handlers ---
-        openBtn.addEventListener('click', function(e) {
-            e.preventDefault();
-            modal.style.display = 'block';
-        });
-
-        closeBtn.addEventListener('click', () => modal.style.display = 'none');
-        window.addEventListener('click', (e) => {
-            if (e.target == modal) modal.style.display = 'none';
-        });
-
-        buttons.addEventListener('click', function(e) {
-            if (!e.target.matches('button')) return;
-
-            const key = e.target.textContent;
-            
-            if (!isNaN(key) || key === '.') {
-                appendCharacter(key);
-            } else if ('+-×÷()'.includes(key)) {
-                appendCharacter(key);
-            } else if (key === '%') {
-                appendCharacter(key);
-            } else if (key === 'C') {
-                clearAll();
-            } else if (key === 'DEL') {
-                deleteLast();
-            } else if (key === '=') {
-                calculateFinal();
-            }
-        });
-    });
-    </script>
-    
-    <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        // --- 資料庫 ---
-        // ▼▼▼【已修正】廣播電台資料庫，所有網址均為穩定的 HTTPS 連結 ▼▼▼
-        const radioData = [
-            { name: "中廣新聞網", url: "https://hls.mediaspot.cc/bcc_news/smil:bcc_news.smil/playlist.m3u8", type: "hls" },
-            { name: "News98 新聞網", url: "https://broadcast.news98.com.tw/audio/98news", type: "direct" },
-            { name: "飛碟電台", url: "https://hls.media.stream.live/hls/uforadiolive/live/playlist.m3u8", type: "hls" },
-            { name: "警察廣播電台 (全國)", url: "https://hls.gov.taipei/live/pbs/playlist.m3u8", type: "hls" },
-            { name: "POP Radio 台北流行廣播", url: "https://hichannel.hinet.net/live/pool/149/hls/live.m3u8", type: "hls" },
-            { name: "環宇廣播電台", url: "https://cast.und.com.tw/967", type: "direct" },
-            { name: "Hit FM 聯播網", url: "https://s2.rcs.revma.com/1st3r02anx8uv", type: "direct" },
-            { name: "中廣音樂網 iRadio", url: "https://hls.mediaspot.cc/bcc_imusic/smil:bcc_imusic.smil/playlist.m3u8", type: "hls" },
-            { name: "KISS Radio", url: "https://kissradio.tw.prod.boltdns.net/hls/live/2022837/971CH01/master.m3u8", type: "hls" },
-            { name: "Apple Line 蘋果線上", url: "https://media.apple-line.com/appleline.mp3", type: "direct" },
-            { name: "Best Radio 好事聯播網", url: "https://s4.rcs.revma.com/ypqt590xwz8uv", type: "direct" },
-            { name: "Asia FM 亞太電台", url: "https://stream.asiafm.com.tw/asiafm_web", type: "direct" },
-            { name: "ICRT", url: "https://live.icrt.com.tw/live", type: "direct" },
-            { name: "Classical FM 97.7 古典音樂台", url: "https://live.classical-radio.com.tw/live", type: "direct" },
-            { name: "Bravo FM 91.3 (台北都會音樂台)", url: "https://onair.bravo913.com.tw/BravoRadio", type: "direct" },
-            { name: "國立教育廣播電臺 (臺北)", url: "https://hls.ner.gov.tw/live/ner/playlist.m3u8", type: "hls" },
-            { name: "中央廣播電臺 (國語)", url: "https://livestream.rti.org.tw/hls-live/live/stream1/playlist.m3u8", type: "hls" },
-            { name: "台北廣播電台 (FM 93.1)", url: "https://hls.gov.taipei/live/Tpeg/playlist.m3u8", type: "hls" },
-            { name: "高雄廣播電台 (FM 94.3)", url: "https://hls.kbs.gov.tw/KbsLive/_definst_/KbsLive/playlist.m3u8", type: "hls" },
-            { name: "寶島新聲", url: "https://live.superfm98-5.com.tw/superfm985", type: "direct" }
-        ];
-        // ▲▲▲【修正結束】▲▲▲
-
-        const podcastData = [
-            { category: "法律與時事", name: "法客電台 by 法客 Fank", rssUrl: "https://rss.soundon.fm/podcasts/4222a088-722a-4467-941d-3b566537b8d7" },
-            { category: "法律與時事", name: "法律白話文運動", rssUrl: "https://feeds.soundon.fm/podcasts/110924d5-4ac1-43b3-85e6-75f284457f5c" },
-            { category: "法律與時事", name: "瑩真律師", rssUrl: "https://feeds.soundon.fm/podcasts/3506c257-22d7-4861-a53b-0105b4e311a2" },
-            { category: "法律與時事", name: "雞蛋糕律師aka說書人", rssUrl: "https://feeds.soundon.fm/podcasts/7e299615-5592-4742-99b9-d102be8d1c7c" },
-            { category: "法律與時事", name: "法律敲敲門", rssUrl: "https://feeds.soundon.fm/podcasts/b70ba5e6-126a-493a-8b1b-c1212b1a0300" },
-            { category: "法律與時事", name: "敏迪選讀", rssUrl: "https://feeds.soundon.fm/podcasts/f233b8a8-e43b-47e4-b778-a261c15d436f" },
-            { category: "法律與時事", name: "百靈果 News", rssUrl: "https://feeds.soundon.fm/podcasts/8c138760-b396-444a-a032-5c326e0b73c4.xml" },
-            { category: "職場與技能", name: "大人的 Small Talk", rssUrl: "https://feeds.soundon.fm/podcasts/116235b6-a212-42a9-8743-a1c1ac40b37e" },
-            { category: "職場與技能", name: "佐編茶水間 (Zoey)", rssUrl: "https://rss.soundon.fm/podcasts/02a99d68-7552-472e-8a21-be4f2d3714b6" },
-            { category: "職場與技能", name: "星箭廣播", rssUrl: "https://feeds.simplecast.com/7r1T0kI1" },
-            { category: "職場與技能", name: "最近工作還好嗎", rssUrl: "https://feeds.soundon.fm/podcasts/8a68b726-24e5-4f7f-8636-a36c92d506f3" },
-            { category: "職場與技能", name: "PM大小事", rssUrl: "https://feeds.soundon.fm/podcasts/f6d74702-835c-4a33-9118-87a329c66e2c" },
-            { category: "職場與技能", name: "讓思想去旅行", rssUrl: "https://feeds.soundon.fm/podcasts/983942b0-8c2a-4847-a864-779836173d1f" },
-            { category: "人資與管理", name: "人資主管UP學", rssUrl: "https://open.firstory.me/rss/user/ckg4zvea5628208759j1ksmg6" },
-            { category: "人資與管理", name: "一談就贏：Alex 的談判學", rssUrl: "https://feeds.soundon.fm/podcasts/88563335-d218-4a6c-941f-a5f36e8b4e76" },
-            { category: "人資與管理", name: "Vista寫作陪伴計畫", rssUrl: "https://feeds.soundon.fm/podcasts/11f005a3-71a2-4752-b43d-6b5ec63046f4" },
-            { category: "人資與管理", name: "BFA 簡報編輯室", rssUrl: "https://feeds.soundon.fm/podcasts/3b5a1b3c-11dc-4a7b-a48e-0f738a08d9f4" },
-            { category: "綜合熱門", name: "台灣通勤第一品牌", rssUrl: "https://feeds.soundon.fm/podcasts/122f8773-a8b9-4f51-9e7f-055365559c73.xml" },
-            { category: "綜合熱門", name: "聽天下：天下雜誌", rssUrl: "https://storage.googleapis.com/cw-podcast-rss-feed/cw_podcast_all.xml" },
-            { category: "綜合熱門", name: "吳淡如人生實用商學院", rssUrl: "https://feeds.soundon.fm/podcasts/c3912a76-9280-485a-a82f-2d6f8f17049c.xml" },
-            { category: "綜合熱門", name: "好味小姐開束縛我還你原形", rssUrl: "https://feeds.soundon.fm/podcasts/a59025e1-feb7-4584-a15e-a6a9644f6f26.xml" },
-            { category: "綜合熱門", name: "從前從前", rssUrl: "https://feeds.soundon.fm/podcasts/a4dc689b-f111-468a-8534-75c13e4b7501.xml" },
-            { category: "綜合熱門", name: "呱吉", rssUrl: "https://feeds.soundon.fm/podcasts/2ea60017-d586-4444-a55e-4b6b6c0e532b.xml" },
-            { category: "投資理財", name: "Gooaye 股癌", rssUrl: "https://feeds.soundon.fm/podcasts/a111f0a8-f472-4809-84b2-a421a2b25547.xml" },
-            { category: "投資理財", name: "M觀點", rssUrl: "https://feeds.soundon.fm/podcasts/e3bc0062-a4a9-4786-8a03-c6f31f77d3f8" },
-            { category: "投資理財", name: "財報狗", rssUrl: "https://feeds.soundon.fm/podcasts/8fa97672-2357-4228-a3f2-11c070c7329b" },
-            { category: "投資理財", name: "美股K線 anchored on Hope", rssUrl: "https://feeds.soundon.fm/podcasts/c9c48858-a56f-4221-8207-3382c7a70196" },
-            { category: "投資理財", name: "MacroMicro 財經M平方", rssUrl: "https://feeds.soundon.fm/podcasts/b52382c4-8067-4217-862d-9475949d11fc" },
-            { category: "投資理財", name: "JC財經觀點", rssUrl: "https://feeds.soundon.fm/podcasts/1105e1a1-9492-4914-a58d-7582ba95955e" },
-            { category: "投資理財", name: "游庭皓的財經皓角", rssUrl: "https://feeds.soundon.fm/podcasts/1e58a785-f55a-4e20-95b6-7647240a5e8e" },
-        ];
-
-        // --- DOM 元素 ---
-        const playerModal = document.getElementById('player-modal');
-        const openPlayerBtn = document.getElementById('open-player-btn');
-        const closePlayerBtn = document.getElementById('close-player-btn');
-        const modeToggle = document.getElementById('player-mode-toggle');
-        const showSelect = document.getElementById('player-show-select');
-        const episodeSelect = document.getElementById('player-episode-select');
-        const episodeWrapper = document.getElementById('episode-select-wrapper');
-        const mainAudioPlayer = document.getElementById('main-audio-player');
-        const loadingIndicator = document.getElementById('player-loading-indicator');
-        
-        let hls = null;
-        let currentMode = 'radio';
-
-        // --- 核心功能 ---
-        function openPlayer() { playerModal.classList.add('is-visible'); }
-        function closePlayer() { playerModal.classList.remove('is-visible'); stopAllPlayback(); }
-        
-        function stopAllPlayback() {
-            mainAudioPlayer.pause();
-            mainAudioPlayer.src = "";
-            if (hls) {
-                hls.destroy();
-                hls = null;
-            }
-        }
-
-        function populateSelect(selectElement, data, valueKey, textKey) {
-            selectElement.innerHTML = `<option value="">--- 請選擇 ---</option>`;
-            
-            if (data.length > 0 && data[0].category) {
-                let currentGroup = null;
-                let optgroupElement = null;
-
-                data.forEach(item => {
-                    if (item.category !== currentGroup) {
-                        currentGroup = item.category;
-                        optgroupElement = document.createElement('optgroup');
-                        optgroupElement.label = currentGroup;
-                        selectElement.appendChild(optgroupElement);
-                    }
-                    
-                    const option = document.createElement('option');
-                    option.value = item[valueKey];
-                    option.textContent = item[textKey];
-                    if (optgroupElement) {
-                        optgroupElement.appendChild(option);
-                    }
-                });
-
-            } else {
-                data.forEach(item => {
-                    const option = document.createElement('option');
-                    option.value = item[valueKey];
-                    option.textContent = item[textKey];
-                    if(item.type) {
-                        option.dataset.type = item.type;
-                    }
-                    selectElement.appendChild(option);
-                });
-            }
-        }
-
-        function updateUIForMode(mode) {
-            currentMode = mode;
-            stopAllPlayback();
-            episodeSelect.innerHTML = '';
-            
-            if (mode === 'radio') {
-                episodeWrapper.style.display = 'none';
-                populateSelect(showSelect, radioData, 'url', 'name');
-            } else { // podcast
-                episodeWrapper.style.display = 'block';
-                populateSelect(showSelect, podcastData, 'rssUrl', 'name');
-            }
-        }
-        
-        async function fetchAndParseRSS(rssUrl) {
-            if (!rssUrl) {
-                episodeSelect.innerHTML = '';
-                return;
-            }
-            loadingIndicator.style.display = 'flex';
-            episodeSelect.innerHTML = '<option>載入中...</option>';
-            
-            const proxyUrl = `https://api.allorigins.win/get?url=${encodeURIComponent(rssUrl)}`;
-            
-            try {
-                const response = await fetch(proxyUrl);
-                if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
-                const data = await response.json();
-                const xmlString = data.contents;
-                
-                const parser = new DOMParser();
-                const xmlDoc = parser.parseFromString(xmlString, "application/xml");
-                
-                const items = xmlDoc.querySelectorAll('item');
-                const episodes = Array.from(items).map(item => {
-                    const titleElement = item.querySelector('title');
-                    const enclosureElement = item.querySelector('enclosure');
-                    
-                    return {
-                        title: titleElement ? titleElement.textContent : '無標題',
-                        url: enclosureElement ? enclosureElement.getAttribute('url') : ''
-                    };
-                }).filter(e => e.url);
-                
-                populateSelect(episodeSelect, episodes, 'url', 'title');
-                
-                if (episodes.length > 0) {
-                    episodeSelect.selectedIndex = 1;
-                    playDirectStream(episodes[0].url);
+            // 核心功能函式
+            open: function() { this.modal.classList.add('is-visible'); },
+            close: function() { this.modal.classList.remove('is-visible'); this.stop(); },
+            stop: function() {
+                this.audioPlayer.pause();
+                this.audioPlayer.src = "";
+                if (this.hls) {
+                    this.hls.destroy();
+                    this.hls = null;
                 }
+            },
+            play: function(url, type) {
+                this.stop();
+                console.log(`Attempting to play: ${url} (type: ${type})`);
+                if (type === 'hls') {
+                    this.playHls(url);
+                } else {
+                    this.playDirect(url);
+                }
+            },
+            playDirect: function(url) {
+                this.audioPlayer.src = url;
+                this.audioPlayer.play().catch(e => console.error("Direct Playback Error:", e));
+            },
+            playHls: function(url) {
+                if (Hls.isSupported()) {
+                    this.hls = new Hls();
+                    this.hls.loadSource(url);
+                    this.hls.attachMedia(this.audioPlayer);
+                    this.hls.on(Hls.Events.MANIFEST_PARSED, () => {
+                        this.audioPlayer.play().catch(e => console.error("HLS Playback Error:", e));
+                    });
+                    this.hls.on(Hls.Events.ERROR, (event, data) => {
+                        console.error('HLS.js Error:', data.type, ' - ', data.details);
+                        if (data.fatal) {
+                            switch(data.type) {
+                                case Hls.ErrorTypes.NETWORK_ERROR: this.hls.startLoad(); break;
+                                case Hls.ErrorTypes.MEDIA_ERROR: this.hls.recoverMediaError(); break;
+                                default: this.hls.destroy(); break;
+                            }
+                        }
+                    });
+                } else if (this.audioPlayer.canPlayType('application/vnd.apple.mpegurl')) {
+                    this.playDirect(url); // Native HLS support
+                }
+            },
 
-            } catch (error) {
-                console.error("抓取或解析 RSS Feed 失敗:", error);
-                episodeSelect.innerHTML = '<option>載入失敗，請稍後再試</option>';
-            } finally {
-                loadingIndicator.style.display = 'none';
+            // UI 更新與資料處理
+            updateUIForMode: function(mode) {
+                this.currentMode = mode;
+                this.stop();
+                this.episodeSelect.innerHTML = '';
+                if (mode === 'radio') {
+                    this.episodeWrapper.style.display = 'none';
+                    this.populateSelect(this.showSelect, this.radioData, 'url', 'name');
+                } else {
+                    this.episodeWrapper.style.display = 'block';
+                    this.populateSelect(this.showSelect, this.podcastData, 'rssUrl', 'name');
+                }
+            },
+            populateSelect: function(selectElement, data, valueKey, textKey) {
+                selectElement.innerHTML = `<option value="">--- 請選擇 ---</option>`;
+                if (data.length > 0 && data[0].category) {
+                    let currentGroup = null;
+                    let optgroupElement = null;
+                    data.forEach(item => {
+                        if (item.category !== currentGroup) {
+                            currentGroup = item.category;
+                            optgroupElement = document.createElement('optgroup');
+                            optgroupElement.label = currentGroup;
+                            selectElement.appendChild(optgroupElement);
+                        }
+                        const option = document.createElement('option');
+                        option.value = item[valueKey];
+                        option.textContent = item[textKey];
+                        if (optgroupElement) optgroupElement.appendChild(option);
+                    });
+                } else {
+                    data.forEach(item => {
+                        const option = document.createElement('option');
+                        option.value = item[valueKey];
+                        option.textContent = item[textKey];
+                        if (item.type) option.dataset.type = item.type;
+                        selectElement.appendChild(option);
+                    });
+                }
+            },
+            fetchAndParseRSS: async function(rssUrl) {
+                this.loadingIndicator.style.display = 'flex';
+                this.episodeSelect.innerHTML = '<option>載入中...</option>';
+                const proxyUrl = `https://api.allorigins.win/get?url=${encodeURIComponent(rssUrl)}`;
+                try {
+                    const response = await fetch(proxyUrl);
+                    if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+                    const data = await response.json();
+                    const parser = new DOMParser();
+                    const xmlDoc = parser.parseFromString(data.contents, "application/xml");
+                    const items = xmlDoc.querySelectorAll('item');
+                    const episodes = Array.from(items).map(item => ({
+                        title: item.querySelector('title')?.textContent || '無標題',
+                        url: item.querySelector('enclosure')?.getAttribute('url') || ''
+                    })).filter(e => e.url);
+
+                    this.populateSelect(this.episodeSelect, episodes, 'url', 'title');
+                    if (episodes.length > 0) {
+                        this.episodeSelect.selectedIndex = 1;
+                        this.play(episodes[0].url, 'direct');
+                    }
+                } catch (error) {
+                    console.error("RSS Fetch/Parse Error:", error);
+                    this.episodeSelect.innerHTML = '<option>載入失敗</option>';
+                } finally {
+                    this.loadingIndicator.style.display = 'none';
+                }
             }
-        }
-
-        function playStream(url, type) {
-            stopAllPlayback();
-            if (type === 'hls') {
-                playHlsStream(url);
-            } else {
-                playDirectStream(url);
-            }
-        }
-
-        function playHlsStream(url) {
-            if (Hls.isSupported()) {
-                hls = new Hls();
-                hls.loadSource(url);
-                hls.attachMedia(mainAudioPlayer);
-                hls.on(Hls.Events.MANIFEST_PARSED, function () {
-                    mainAudioPlayer.play().catch(e => console.error("HLS 播放失敗", e));
-                });
-                hls.on(Hls.Events.ERROR, function (event, data) {
-                    console.error('HLS.js 錯誤:', data);
-                });
-            } else if (mainAudioPlayer.canPlayType('application/vnd.apple.mpegurl')) {
-                mainAudioPlayer.src = url;
-                mainAudioPlayer.play().catch(e => console.error("原生 HLS 播放失敗", e));
-            }
-        }
-        
-        function playDirectStream(url) {
-            mainAudioPlayer.src = url;
-            mainAudioPlayer.play().catch(e => console.error("直接播放失敗", e));
-        }
-
-        // --- 事件監聽 ---
-        openPlayerBtn.addEventListener('click', (e) => {
-            e.preventDefault();
-            openPlayer();
-        });
-        
-        closePlayerBtn.addEventListener('click', closePlayer);
-        playerModal.addEventListener('click', (e) => {
-            if (e.target === playerModal) {
-                closePlayer();
-            }
-        });
-
-        modeToggle.addEventListener('change', () => {
-            updateUIForMode(modeToggle.checked ? 'podcast' : 'radio');
-        });
-        
-        showSelect.addEventListener('change', (e) => {
-            const selectedValue = e.target.value;
-            if (!selectedValue) {
-                stopAllPlayback();
-                if(currentMode === 'podcast') episodeSelect.innerHTML = '';
-                return;
-            };
-
-            if (currentMode === 'radio') {
-                const selectedOption = e.target.options[e.target.selectedIndex];
-                const type = selectedOption.dataset.type;
-                playStream(selectedValue, type);
-            } else { // podcast
-                fetchAndParseRSS(selectedValue);
-            }
-        });
-
-        episodeSelect.addEventListener('change', (e) => {
-            const mp3Url = e.target.value;
-            if (mp3Url) {
-                playDirectStream(mp3Url);
-            } else {
-                stopAllPlayback();
-            }
-        });
-
-        // --- 初始化 ---
-        updateUIForMode('radio');
+        };
+        AudioPlayer.init();
 
     });
     </script>
+    <!-- ▲▲▲【重構結束】▲▲▲ -->
 
 </body>
 </html>
