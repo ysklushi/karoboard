@@ -461,6 +461,15 @@ body {
     background-color: #e67e22;
 }
 
+/* ▼▼▼【新增的樣式】▼▼▼ */
+.panel-button.panel-button-radio {
+    background-color: #9b59b6;
+}
+.panel-button.panel-button-radio:hover {
+    background-color: #8e44ad;
+}
+/* ▲▲▲【新增結束】▲▲▲ */
+
 .panel-button i {
     font-size: 20px;
     width: 24px;
@@ -504,6 +513,11 @@ body {
     .panel-button.panel-button-warning:hover {
         background-color: #fd7e14;
     }
+    /* ▼▼▼【新增的樣式】▼▼▼ */
+    .panel-button.panel-button-radio:hover {
+        background-color: #9b59b6;
+    }
+    /* ▲▲▲【新增結束】▲▲▲ */
     .panel-button .panel-text {
         display: none;
     }
